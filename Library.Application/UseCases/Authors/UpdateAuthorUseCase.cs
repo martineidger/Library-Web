@@ -1,4 +1,6 @@
-﻿using Library.Core.Abstractions;
+﻿using AutoMapper;
+using Library.Application.Models;
+using Library.Core.Abstractions;
 using Library.Core.Entities;
 using Library.Core.Exceptions;
 using System;
@@ -12,17 +14,19 @@ namespace Library.Application.UseCases.Authors
     public class UpdateAuthorUseCase
     {
         private readonly ILibraryUnitOfWork db;
+        private readonly IMapper mapper;
 
-        public UpdateAuthorUseCase(ILibraryUnitOfWork db)
+        public UpdateAuthorUseCase(ILibraryUnitOfWork db, IMapper mapper)
         {
             this.db = db;
+            this.mapper = mapper;
         }
-        public async Task ExecuteAsync(AuthorEntity author)
+        public async Task ExecuteAsync(AuthorModel author)
         {
             if (db.authorRepository.GetByIdAsyhnc(author.Id) == null)
                 throw new ObjectNotFoundException($"Error on UpdateAuthorUseCase: no such author, id = {author.Id}");
 
-            await db.authorRepository.UpdateAsync(author);
+            await db.authorRepository.UpdateAsync(mapper.Map<AuthorEntity>(author));
             await db.SaveChangesAsync();
         }
     }

@@ -19,14 +19,15 @@ namespace Library.Infrastructure.Repositories
             this.context = context;
         }
 
-        public async Task AddAsync(UserEntity user)
+        public async Task<Guid> AddAsync(UserEntity user)
         {
             await context.Users.AddAsync(user);
+            return user.Id;
         }
 
-        public bool Delete(Guid id)
+        public bool Delete(string email)
         {
-            var usr = context.Users.Find(id);
+            var usr = context.Users.FirstOrDefault(u=> u.Email == email);
             if (usr != null) return false;
             context.Users.Remove(usr);
             return true;
@@ -40,6 +41,11 @@ namespace Library.Infrastructure.Repositories
         public async Task<UserEntity> GetByIdAsync(Guid id)
         {
             return await context.Users.FindAsync(id);
+        }
+
+        public Task<Guid> UpdateAsync(UserEntity user)
+        {
+            throw new NotImplementedException();
         }
     }
 }

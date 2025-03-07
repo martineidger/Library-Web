@@ -1,4 +1,6 @@
-﻿using Library.Core.Abstractions;
+﻿using AutoMapper;
+using Library.Application.Models;
+using Library.Core.Abstractions;
 using Library.Core.Entities;
 using Library.Core.Exceptions;
 using System;
@@ -12,15 +14,19 @@ namespace Library.Application.UseCases.Authors
     public class GetAllAuthorsUseCase
     {
         private readonly ILibraryUnitOfWork db;
+        private readonly IMapper mapper;
 
-        public GetAllAuthorsUseCase(ILibraryUnitOfWork db)
+        public GetAllAuthorsUseCase(ILibraryUnitOfWork db, IMapper mapper)
         {
             this.db = db;
+            this.mapper = mapper;
         }
-        public async Task<List<AuthorEntity>> ExecuteAsync()
+        public async Task<List<AuthorModel>> ExecuteAsync()
         {
-            return await db.authorRepository.GetAllAsync() ??
+            var authEntities =  await db.authorRepository.GetAllAsync() ??
                 throw new ObjectNotFoundException($"Error on GetAllAuthorsUseCase: list was empty");
+
+            return mapper.Map<List<AuthorModel>>(authEntities);
         }
     }
 }

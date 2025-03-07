@@ -1,4 +1,6 @@
-﻿using Library.Core.Abstractions;
+﻿using AutoMapper;
+using Library.Application.Models;
+using Library.Core.Abstractions;
 using Library.Core.Entities;
 using Library.Core.Exceptions;
 using System;
@@ -12,15 +14,19 @@ namespace Library.Application.UseCases.Books
     public class GetBookByIDUseCase
     {
         private readonly ILibraryUnitOfWork db;
+        private readonly IMapper mapper;
 
-        public GetBookByIDUseCase(ILibraryUnitOfWork db)
+        public GetBookByIDUseCase(ILibraryUnitOfWork db, IMapper mapper)
         {
             this.db = db;
+            this.mapper = mapper;
         }
-        public async Task<BookEntity> ExecuteAsync(Guid id)
+        public async Task<BookModel> ExecuteAsync(Guid id)
         {
-            return await db.bookRepository.GetByIdAsync(id)??
+            var bookEntity =  await db.bookRepository.GetByIdAsync(id)??
                 throw new ObjectNotFoundException($"Error on GetBookByIDUseCase: no such book, id = {id}");
+
+            return mapper.Map<BookModel>(bookEntity);
         }
     }
 }

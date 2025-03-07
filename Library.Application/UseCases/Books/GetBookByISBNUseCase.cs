@@ -1,4 +1,6 @@
-﻿using Library.Core.Abstractions;
+﻿using AutoMapper;
+using Library.Application.Models;
+using Library.Core.Abstractions;
 using Library.Core.Entities;
 using Library.Core.Exceptions;
 using System;
@@ -12,15 +14,19 @@ namespace Library.Application.UseCases.Books
     public class GetBookByISBNUseCase
     {
         private readonly ILibraryUnitOfWork db;
+        private readonly IMapper mapper;
 
-        public GetBookByISBNUseCase(ILibraryUnitOfWork db)
+        public GetBookByISBNUseCase(ILibraryUnitOfWork db, IMapper mapper)
         {
             this.db = db;
+            this.mapper = mapper;
         }
-        public async Task<BookEntity> ExecuteAsync(string isbn)
+        public async Task<BookModel> ExecuteAsync(string isbn)
         {
-            return await db.bookRepository.GetByISBNAsync(isbn) ??
+            var bookEntity = await db.bookRepository.GetByISBNAsync(isbn) ??
                 throw new ObjectNotFoundException($"Error on GetByISBNAsync: no such book, ISBN = {isbn}");
+
+            return mapper.Map<BookModel>(bookEntity);
         }
     }
 }

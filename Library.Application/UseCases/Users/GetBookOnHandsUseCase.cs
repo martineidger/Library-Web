@@ -1,4 +1,5 @@
-﻿using Library.Core.Abstractions;
+﻿using Library.Application.Models;
+using Library.Core.Abstractions;
 using Library.Core.Entities;
 using Library.Core.Exceptions;
 using System;
@@ -17,7 +18,7 @@ namespace Library.Application.UseCases.Users
         {
             this.db = db;
         }
-        public async Task ExecuteAsync(UserEntity user, BookEntity book)
+        public async Task ExecuteAsync(UserModel user, BookModel book)
         {
             var usEntity = await db.userRepository.GetByIdAsync(user.Id) ??
                 throw new ObjectNotFoundException($"Error on GetBookOnHandsUseCase: no such user, id = {user.Id}");

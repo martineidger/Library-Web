@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Library.Core.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library.Core.Entities
+namespace Library.Application.Models
 {
-    public class AuthorEntity
+    public class AuthorModel
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string FirstName { get; set; }
@@ -14,6 +15,6 @@ namespace Library.Core.Entities
         public DateTime BirthDate { get; set; }
         public string Country { get; set; }
 
-        public List<BookEntity> Books { get; set; } = new List<BookEntity>();
+        public List<BookModel> Books { get; set; } = new List<BookModel>();
     }
 }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library.Core.Entities
+namespace Library.Application.Models
 {
-    public class UserEntity
+    public class UserModel
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Role {  get; set; }
@@ -14,6 +14,6 @@ namespace Library.Core.Entities
         public string HashPassword { get; set; }
         public string DisplayName { get; set; }
 
-        public List<BookEntity> Books { get; set; } = new List<BookEntity>();
+        public List<BookModel> Books { get; set; } = new List<BookModel>();
     }
 }

@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using AutoMapper;
+using Library.Application.Models;
 
 namespace Library.Application.UseCases.Books
 {
@@ -14,18 +16,19 @@ namespace Library.Application.UseCases.Books
     {
         private readonly IImageService imageService;
         private readonly ILibraryUnitOfWork db;
+        private readonly IMapper mapper;
 
-        public AddBookUseCase(IImageService imageService, ILibraryUnitOfWork db)
+        public AddBookUseCase(IImageService imageService, ILibraryUnitOfWork db, IMapper mapper)
         {
             this.imageService = imageService;
             this.db = db;
+            this.mapper = mapper;
         }
-        public async Task<Guid> ExecuteAsync(BookEntity newBook, IFormFile bookImg)
+        public async Task<Guid> ExecuteAsync(BookModel newBook, IFormFile bookImg)
         {
-            //add validations
             newBook.ImgPath = await imageService.SaveAsync(bookImg);
 
-            var id = await db.bookRepository.AddAsync(newBook);
+            var id = await db.bookRepository.AddAsync(mapper.Map<BookEntity>(newBook));
             await db.SaveChangesAsync();
 
             return id;
