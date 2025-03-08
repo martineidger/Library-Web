@@ -32,9 +32,25 @@ namespace Library.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<List<AuthorEntity>> GetAllAsync()
+        public async Task<PagedItems<AuthorEntity>> GetAllAsync(int page, int size)
         {
-            return await context.Authors.AsNoTracking().ToListAsync();
+            var query = context.Authors.AsNoTracking();
+
+            var totalItems = await query.CountAsync(); // Общее количество книг
+
+            var items = await query
+                .Skip((page - 1) * size) // Пропускаем элементы
+                .Take(size) // Берем нужное количество
+                .ToListAsync(); // Загружаем в память
+
+            return new PagedItems<AuthorEntity>
+            {
+                Items = items,
+                TotalCount = totalItems,
+                PageSize = size,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling(totalItems / (double)size)
+            };
         }
 
         public async Task<AuthorEntity> GetByIdAsyhnc(Guid id)
@@ -44,7 +60,16 @@ namespace Library.Infrastructure.Repositories
 
         public async Task<Guid> UpdateAsync(AuthorEntity entity)
         {
-            context.Update(entity);
+            var localEntity = context.Authors.Local.FirstOrDefault(a => a.Id == entity.Id);
+            if (localEntity != null)
+            {
+                context.Entry(localEntity).CurrentValues.SetValues(entity);
+            }
+            else
+            {
+                context.Update(entity);
+            }
+
             return entity.Id;
         }
     }

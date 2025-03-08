@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using Library.Application.Models;
 using Library.Core.Abstractions;
+using Library.Core.Abstractions.ServicesAbstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -17,7 +18,7 @@ namespace Library.Application.Services
         ACS_TOKEN_LIFE = 30,
         RFSH_TOKEN_LIFE = 30
     }
-    public class TokenService
+    public class TokenService : ITokenService
     {
         private readonly string secretKey;
         private readonly JwtSecurityTokenHandler tokenHandler;
@@ -29,7 +30,7 @@ namespace Library.Application.Services
             this.tokenHandler = new JwtSecurityTokenHandler();
             this.db = db;
         }
-        public string GetAccesToken(TokenRequestModel request)
+        public string GetAccesToken(Guid id, string role)
         {
             var key = System.Text.Encoding.ASCII.GetBytes(secretKey);
 
@@ -37,8 +38,8 @@ namespace Library.Application.Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, request.UserId.ToString()),
-                    new Claim(ClaimTypes.Role, request.Role)
+                    new Claim(ClaimTypes.NameIdentifier, id.ToString()),
+                    new Claim(ClaimTypes.Role, role)
                 }),
                 Expires = DateTime.UtcNow.AddMinutes((int)TokenConstants.ACS_TOKEN_LIFE),
                 SigningCredentials = new SigningCredentials(
@@ -49,7 +50,7 @@ namespace Library.Application.Services
             return tokenHandler.WriteToken(accessToken);
         }
 
-        public string GetRefreshToken(TokenRequestModel request)
+        public string GetRefreshToken(Guid id)
         {
             Guid newGuid = Guid.NewGuid();
             string refreshTokenStr = newGuid.ToString("D");
@@ -57,7 +58,7 @@ namespace Library.Application.Services
             var refreshToken = new RefreshTokenModel()
             {
                 Token = refreshTokenStr,
-                UserId = request.UserId,
+                UserId = id,
                 ExpiresIn = DateTime.UtcNow.AddDays((int)TokenConstants.RFSH_TOKEN_LIFE).ToString("o") 
             };
 
@@ -89,11 +90,7 @@ namespace Library.Application.Services
              var accessToken = tokenHandler.CreateToken(accessTokenDescriptor);
              var accessTokenStr = tokenHandler.WriteToken(accessToken);*/
 
-            var newAccessToken = GetAccesToken(new TokenRequestModel()
-            {
-                UserId = userId,
-                Role = user.Role
-            });
+            var newAccessToken = GetAccesToken(userId, user.Role);
 
             return newAccessToken;
         }

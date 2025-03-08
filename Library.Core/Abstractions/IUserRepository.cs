@@ -11,7 +11,7 @@ namespace Library.Core.Abstractions
     {
         Task<Guid> AddAsync(UserEntity user);
         Task<Guid> UpdateAsync(UserEntity user);
-        bool Delete(string email);
+        void Delete(Guid id);
         Task<UserEntity> GetByIdAsync(Guid id);
         Task<UserEntity> GetByEmailAsync(string email);
     }

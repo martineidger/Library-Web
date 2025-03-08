@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Library.Infrastructure
 {
-    internal class LibraryUnitOfWork : ILibraryUnitOfWork
+    public class LibraryUnitOfWork : ILibraryUnitOfWork
     {
         private readonly LibraryDbContext context;
         public IAuthorRepository authorRepository { get; }

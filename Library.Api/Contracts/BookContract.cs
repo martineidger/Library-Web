@@ -1,16 +1,9 @@
 ﻿using Library.Core.Entities;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Library.Application.Models
+namespace Library.Api.Contracts
 {
-    public class BookModel
+    public class BookContract
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
         public string ISBN { get; set; }
         public string Title { get; set; }
         public string Genre { get; set; }

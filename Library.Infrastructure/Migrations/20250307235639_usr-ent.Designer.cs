@@ -3,6 +3,7 @@ using System;
 using Library.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Library.Infrastructure.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    partial class LibraryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250307235639_usr-ent")]
+    partial class usrent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,7 +60,7 @@ namespace Library.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AuthorID")
+                    b.Property<Guid>("AuthorId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Description")
@@ -95,7 +98,7 @@ namespace Library.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorID");
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex("UserEntityId");
 
@@ -135,7 +138,7 @@ namespace Library.Infrastructure.Migrations
                 {
                     b.HasOne("Library.Core.Entities.AuthorEntity", "Author")
                         .WithMany("Books")
-                        .HasForeignKey("AuthorID")
+                        .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

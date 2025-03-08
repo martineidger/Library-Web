@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Library.Application.Mappings
 {
-    internal class UserEntProfile : Profile
+    public class UserEntProfile : Profile
     {
         public UserEntProfile()
         {

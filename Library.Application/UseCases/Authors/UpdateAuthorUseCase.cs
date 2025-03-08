@@ -23,7 +23,7 @@ namespace Library.Application.UseCases.Authors
         }
         public async Task ExecuteAsync(AuthorModel author)
         {
-            if (db.authorRepository.GetByIdAsyhnc(author.Id) == null)
+            if (await db.authorRepository.GetByIdAsyhnc(author.Id) == null)
                 throw new ObjectNotFoundException($"Error on UpdateAuthorUseCase: no such author, id = {author.Id}");
 
             await db.authorRepository.UpdateAsync(mapper.Map<AuthorEntity>(author));

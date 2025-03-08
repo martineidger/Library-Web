@@ -23,7 +23,7 @@ namespace Library.Application.UseCases.Books
         }
         public async Task ExecuteAsync(BookModel book)
         {
-            if (db.bookRepository.GetByIdAsync(book.Id) == null)
+            if (await db.bookRepository.GetByIdAsync(book.Id) == null)
                 throw new ObjectNotFoundException($"Error on UpdateBookUseCase: no such book, id = {book.Id}");
 
             await db.bookRepository.UpdateAsync(mapper.Map<BookEntity>(book));

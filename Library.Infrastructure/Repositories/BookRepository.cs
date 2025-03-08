@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Library.Infrastructure.Repositories
 {
@@ -31,20 +33,51 @@ namespace Library.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<List<BookEntity>> GetAllAsync()
+        public async Task<PagedItems<BookEntity>> GetAllAsync(int page, int size)
         {
-            return await context.Books.AsNoTracking().ToListAsync();
+            var query = context.Books.AsNoTracking();
+
+            var totalItems = await query.CountAsync(); // Общее количество книг
+
+            var items = await query
+                .Skip((page - 1) * size) // Пропускаем элементы
+                .Take(size) // Берем нужное количество
+                .ToListAsync(); // Загружаем в память
+
+            return new PagedItems<BookEntity>
+            {
+                Items = items,
+                TotalCount = totalItems,
+                PageSize = size,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling(totalItems / (double)size)
+            };
         }
 
-        public async Task<List<BookEntity>> GetBookByAuthor(Guid authorId)
+        public async Task<PagedItems<BookEntity>> GetBookByAuthor(Guid authorId, int page, int size)
         {
-            return await context.Books.AsNoTracking().Where(b => b.Author.Id == authorId).ToListAsync();
+            var query = context.Books.AsNoTracking().Where(b => b.Author.Id == authorId);
+            var totalItems = await query.CountAsync(); // Общее количество книг
+
+            var items = await query
+                .Skip((page - 1) * size) // Пропускаем элементы
+                .Take(size) // Берем нужное количество
+                .ToListAsync(); // Загружаем в память
+
+            return new PagedItems<BookEntity>
+            {
+                Items = items,
+                TotalCount = totalItems,
+                PageSize = size,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling(totalItems / (double)size)
+            };
         }
 
 
         public async Task<BookEntity> GetByIdAsync(Guid id)
         {
-            return await context.Books.FindAsync(id);
+            return await context.Books.Include(b => b.Author).FirstOrDefaultAsync(b => b.Id == id);
         }
 
         public async Task<BookEntity> GetByISBNAsync(string isbn)
@@ -54,18 +87,32 @@ namespace Library.Infrastructure.Repositories
 
         public async Task<Guid> UpdateAsync(BookEntity entity)
         {
-            //context.Update(entity);
+            /*
             var entToUpdate = await context.Books.FirstOrDefaultAsync(b => b.Id == entity.Id);
 
             entToUpdate.Title = entity.Title;
             entToUpdate.Author = entity.Author;
+            entToUpdate.AuthorID = entity.AuthorID;
             entToUpdate.ISBN = entity.ISBN;
             entToUpdate.ImgPath = entity.ImgPath;
             entToUpdate.ReturnDate = entity.ReturnDate;
             entToUpdate.PickDate = entity.PickDate;
             entToUpdate.Description = entity.Description;
 
-            return entToUpdate.Id;
+            return entToUpdate.Id;*/
+
+            var localEntity = context.Books.Local.FirstOrDefault(a => a.Id == entity.Id);
+            if (localEntity != null)
+            {
+                context.Entry(localEntity).CurrentValues.SetValues(entity);
+            }
+            else
+            {
+                context.Update(entity);
+            }
+
+            return entity.Id;
+
         }
     }
 }

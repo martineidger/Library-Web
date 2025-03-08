@@ -13,7 +13,7 @@ namespace Library.Application.Mappings
     {
         public BookEntProfile()
         {
-            CreateMap<BookEntity, BookModel>().ReverseMap();
+            CreateMap<BookModel, BookEntity>().ReverseMap();
         }
     }
 }

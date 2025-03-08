@@ -14,6 +14,7 @@ namespace Library.Application.Mappings
         public AuthorEntProfile()
         {
             CreateMap<AuthorEntity, AuthorModel>().ReverseMap();
+            
         }
     }
 }

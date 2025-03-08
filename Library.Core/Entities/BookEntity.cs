@@ -14,8 +14,8 @@ namespace Library.Core.Entities
         public string Title { get; set; }
         public string Genre { get; set; }
         public string Description { get; set; }
-        //public List<AuthorEntity> Authors { get; set; }
         public AuthorEntity Author { get; set; }
+        public Guid AuthorID { get; set; }
         public string? ImgPath {  get; set; }
 
         public DateTime? PickDate { get; set; }

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Library.Application.UseCases.Books
 {
-    public class GetBooksByAuthorUseCase
+    public class GetBooksByAuthorUseCase : BasePagedUseCase<BookModel, BookEntity>
     {
         private readonly ILibraryUnitOfWork db;
         private readonly IMapper mapper;
@@ -21,12 +21,16 @@ namespace Library.Application.UseCases.Books
             this.db = db;
             this.mapper = mapper;
         }
-        public async Task<List<BookModel>> ExecuteAsync(Guid authorId)
+        public async Task<PagedItems<BookModel>> ExecuteAsync(Guid authorId, int page, int size)
         {
-            var booksList = await db.bookRepository.GetAllAsync()??
+            var booksList = await db.bookRepository.GetBookByAuthor(authorId, page, size) ??
                 throw new ObjectNotFoundException($"Error on GetBooksByAuthorUseCase: list was empty");
 
-           return mapper.Map<List<BookModel>>(booksList.Where(b => b.Author.Id == authorId).ToList() ?? new());
+            /*var resBooks = booksList.Items.Where(b => b.AuthorID == authorId).ToList() ?? new();
+            booksList.Items = resBooks;*/
+
+            return MapPagedItems(booksList, mapper);
+            //return mapper.Map<List<BookModel>>();
         }
     }
 }

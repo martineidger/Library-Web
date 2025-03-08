@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using AutoMapper;
 using Library.Application.Models;
+using Library.Core.Exceptions;
 
 namespace Library.Application.UseCases.Books
 {
@@ -18,17 +19,27 @@ namespace Library.Application.UseCases.Books
         private readonly ILibraryUnitOfWork db;
         private readonly IMapper mapper;
 
+        //private string defFileName = "/App/BookCovers/Def.jpg";
+        private string defFileName = "D:\\Code\\Library\\BookCovers\\def.jpg";
+
         public AddBookUseCase(IImageService imageService, ILibraryUnitOfWork db, IMapper mapper)
         {
             this.imageService = imageService;
             this.db = db;
             this.mapper = mapper;
         }
-        public async Task<Guid> ExecuteAsync(BookModel newBook, IFormFile bookImg)
+        public async Task<Guid> ExecuteAsync(BookModel newBook)
         {
-            newBook.ImgPath = await imageService.SaveAsync(bookImg);
+            var bookEnt = mapper.Map<BookEntity>(newBook);
 
-            var id = await db.bookRepository.AddAsync(mapper.Map<BookEntity>(newBook));
+            if (newBook.ImgFile != null)
+                bookEnt.ImgPath = await imageService.SaveAsync(newBook.ImgFile);
+            else bookEnt.ImgPath = defFileName;
+            
+            bookEnt.Author = await db.authorRepository.GetByIdAsyhnc(newBook.AuthorID)??
+                throw new ObjectNotFoundException($"Error on AddBookUseCase: no such author ({newBook.AuthorID})");
+
+            var id = await db.bookRepository.AddAsync(bookEnt);
             await db.SaveChangesAsync();
 
             return id;

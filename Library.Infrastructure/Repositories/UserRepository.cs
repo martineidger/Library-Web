@@ -25,12 +25,10 @@ namespace Library.Infrastructure.Repositories
             return user.Id;
         }
 
-        public bool Delete(string email)
+        public void Delete(Guid id)
         {
-            var usr = context.Users.FirstOrDefault(u=> u.Email == email);
-            if (usr != null) return false;
+            var usr = context.Users.FirstOrDefault(u=> u.Id == id);
             context.Users.Remove(usr);
-            return true;
         }
 
         public async Task<UserEntity> GetByEmailAsync(string email)
@@ -43,9 +41,19 @@ namespace Library.Infrastructure.Repositories
             return await context.Users.FindAsync(id);
         }
 
-        public Task<Guid> UpdateAsync(UserEntity user)
+        public async Task<Guid> UpdateAsync(UserEntity entity)
         {
-            throw new NotImplementedException();
+            var localEntity = context.Books.Local.FirstOrDefault(a => a.Id == entity.Id);
+            if (localEntity != null)
+            {
+                context.Entry(localEntity).CurrentValues.SetValues(entity);
+            }
+            else
+            {
+                context.Update(entity);
+            }
+
+            return entity.Id;
         }
     }
 }
