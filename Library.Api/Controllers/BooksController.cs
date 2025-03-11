@@ -54,7 +54,7 @@ namespace Library.Api.Controllers
             
             return Ok(books);
         }
-        [Authorize(Policy = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Add([FromForm] BookContract book)
         {
@@ -64,7 +64,7 @@ namespace Library.Api.Controllers
 
             return Ok(await addBookUseCase.ExecuteAsync(bookModel));
         }
-        [Authorize(Policy = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
@@ -95,7 +95,7 @@ namespace Library.Api.Controllers
         {
             return Ok(await getBooksByTitleUseCase.ExecuteAsync(title, page, size));
         }
-        [Authorize(Policy = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update([FromForm]BookContract book, Guid id)
         {

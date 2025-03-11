@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Library.Api.Controllers
 {
     [Controller]
-    [Authorize(Policy = "Admin")]
+    [Authorize(Roles = "Admin")]
     [Route("[controller]")]
     public class AdminController : Controller
     {

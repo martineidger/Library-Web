@@ -54,7 +54,7 @@ namespace Library.Api.Controllers
         {
             return Ok(await getAuthorsWithoutPaginationUseCase.ExecuteAsync());
         }
-        [Authorize(Policy = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] AuthorContract author) 
         {
@@ -64,7 +64,7 @@ namespace Library.Api.Controllers
 
             return Ok(await addAuthorUseCase.ExecuteAsync(authorModel));
         }
-        [Authorize(Policy = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
@@ -77,7 +77,7 @@ namespace Library.Api.Controllers
         {
             return Ok(await getAuthorByIdUseCase.ExecuteAsync(id));
         }
-        [Authorize(Policy = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update([FromBody] AuthorContract author, [FromRoute] Guid id)
         {
