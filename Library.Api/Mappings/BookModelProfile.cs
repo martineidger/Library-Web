@@ -9,6 +9,7 @@ namespace Library.Api.Mappings
         public BookModelProfile()
         {
             CreateMap<BookModel, BookContract>().ReverseMap();
+            AllowNullCollections = false;
         }
     }
 }

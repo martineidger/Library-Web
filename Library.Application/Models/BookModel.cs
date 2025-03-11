@@ -17,6 +17,7 @@ namespace Library.Application.Models
         public string Description { get; set; }
         public Guid AuthorID { get; set; }
         public IFormFile? ImgFile { get; set; }
+        public string? ImgPath {  get; set; }
 
         public DateTime? PickDate { get; set; }
         public DateTime? ReturnDate { get; set; }

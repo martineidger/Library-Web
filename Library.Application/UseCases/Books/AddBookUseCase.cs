@@ -10,30 +10,41 @@ using Microsoft.AspNetCore.Http;
 using AutoMapper;
 using Library.Application.Models;
 using Library.Core.Exceptions;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Library.Application.UseCases.Books
 {
     public class AddBookUseCase
     {
+        private readonly IWebHostEnvironment env;
         private readonly IImageService imageService;
         private readonly ILibraryUnitOfWork db;
         private readonly IMapper mapper;
 
         //private string defFileName = "/App/BookCovers/Def.jpg";
-        private string defFileName = "D:\\Code\\Library\\BookCovers\\def.jpg";
+        private string defFileName; 
 
-        public AddBookUseCase(IImageService imageService, ILibraryUnitOfWork db, IMapper mapper)
+        public AddBookUseCase(IWebHostEnvironment env, IImageService imageService, ILibraryUnitOfWork db, IMapper mapper)
         {
+            this.env = env;
             this.imageService = imageService;
             this.db = db;
             this.mapper = mapper;
+
+            defFileName = Path.Combine("Covers", "def.jpg");
         }
         public async Task<Guid> ExecuteAsync(BookModel newBook)
         {
             var bookEnt = mapper.Map<BookEntity>(newBook);
 
+            if (await db.bookRepository.GetByISBNAsync(newBook.ISBN) != null)
+                throw new ObjectAlreadyExistsException($"Book with ISBN {newBook.ISBN} already exists.");
+
             if (newBook.ImgFile != null)
+            {
+                Console.WriteLine("Added image");
                 bookEnt.ImgPath = await imageService.SaveAsync(newBook.ImgFile);
+            }
             else bookEnt.ImgPath = defFileName;
             
             bookEnt.Author = await db.authorRepository.GetByIdAsyhnc(newBook.AuthorID)??

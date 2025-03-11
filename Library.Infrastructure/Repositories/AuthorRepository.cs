@@ -1,5 +1,6 @@
 ﻿using Library.Core.Abstractions;
 using Library.Core.Entities;
+using Library.Core.Exceptions;
 using Library.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,6 +21,7 @@ namespace Library.Infrastructure.Repositories
         }
         public async Task<Guid> AddAsync(AuthorEntity entity)
         {
+                
             await context.Authors.AddAsync(entity);
             return entity.Id;
         }
@@ -53,7 +55,17 @@ namespace Library.Infrastructure.Repositories
             };
         }
 
-        public async Task<AuthorEntity> GetByIdAsyhnc(Guid id)
+        public async Task<List<AuthorEntity>> GetAllAsync()
+        {
+            return await context.Authors.AsNoTracking().ToListAsync();
+        }
+
+        public async Task<AuthorEntity?> GetByFullNAMe(string name, string surname)
+        {
+            return await context.Authors.FirstOrDefaultAsync(a => a.FirstName == name && a.Surname == surname);
+        }
+
+        public async Task<AuthorEntity?> GetByIdAsyhnc(Guid id)
         {
             return await context.Authors.FindAsync(id);
         }

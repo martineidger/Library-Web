@@ -19,7 +19,7 @@ namespace Library.Application.UseCases.Books
         }
         public async Task ExecuteAsync(Guid id)
         {
-            if (db.bookRepository.GetByIdAsync(id) == null)
+            if (await db.bookRepository.GetByIdAsync(id) == null)
                 throw new ObjectNotFoundException($"Error on DeleteBookUseCase: no such book, id = {id}");
 
             db.bookRepository.Delete(id);

@@ -1,5 +1,6 @@
 ﻿using Library.Core.Abstractions;
 using Library.Core.Entities;
+using Library.Core.Exceptions;
 using Library.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,6 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace Library.Infrastructure.Repositories
 {
@@ -21,6 +23,9 @@ namespace Library.Infrastructure.Repositories
         }
         public async Task<Guid> AddAsync(BookEntity entity)
         {
+            /*if(context.Books.Any(b => b.ISBN.Equals(entity.ISBN, StringComparison.OrdinalIgnoreCase)))
+                throw new ObjectAlreadyExistsException($"Book with ISBN {entity.ISBN} already exists");*/
+
             await context.Books.AddAsync(entity);
             return entity.Id;
         }
@@ -75,14 +80,33 @@ namespace Library.Infrastructure.Repositories
         }
 
 
-        public async Task<BookEntity> GetByIdAsync(Guid id)
+        public async Task<BookEntity?> GetByIdAsync(Guid id)
         {
             return await context.Books.Include(b => b.Author).FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        public async Task<BookEntity> GetByISBNAsync(string isbn)
+        public async Task<BookEntity?> GetByISBNAsync(string isbn)
         {
             return await context.Books.FirstOrDefaultAsync(b => b.ISBN == isbn);
+        }
+        public async Task<PagedItems<BookEntity>> GetByTitleAsync(string title, int page, int size)
+        {
+            var query = context.Books.AsNoTracking().Where(b => b.Title.Contains(title));
+            var totalItems = await query.CountAsync(); // Общее количество книг
+
+            var items = await query
+                .Skip((page - 1) * size) // Пропускаем элементы
+                .Take(size) // Берем нужное количество
+                .ToListAsync(); // Загружаем в память
+
+            return new PagedItems<BookEntity>
+            {
+                Items = items,
+                TotalCount = totalItems,
+                PageSize = size,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling(totalItems / (double)size)
+            };
         }
 
         public async Task<Guid> UpdateAsync(BookEntity entity)

@@ -12,7 +12,8 @@ namespace Library.Core.Abstractions
         Task<Guid> AddAsync(UserEntity user);
         Task<Guid> UpdateAsync(UserEntity user);
         void Delete(Guid id);
-        Task<UserEntity> GetByIdAsync(Guid id);
-        Task<UserEntity> GetByEmailAsync(string email);
+        Task<UserEntity?> GetByIdAsync(Guid id);
+        Task<UserEntity?> GetByEmailAsync(string email);
+        Task<PagedItems<BookEntity>> GetUsersBooks(Guid userId, int page, int size);
     }
 }

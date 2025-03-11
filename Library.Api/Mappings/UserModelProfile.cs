@@ -11,6 +11,8 @@ namespace Library.Api.Mappings
             CreateMap<RegistrationContract, UserModel>()
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => "User"));
 
+            CreateMap<UserModel, UserInfoContract>();
+
             
         }
     }

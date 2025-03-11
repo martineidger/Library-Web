@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Library.Api.Contracts;
 using Library.Application.Models;
 using Library.Application.UseCases.Authorisation;
+using Library.Core.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Api.Controllers
@@ -14,23 +16,30 @@ namespace Library.Api.Controllers
         private readonly CreateUserUseCase createUserUseCase;
         private readonly LoginUseCase loginUseCase;
         private readonly RefreshTokenUseCase refreshTokenUseCase;
+        private readonly IValidator<RegistrationContract> regValidator;
+        private readonly IValidator<LoginContract> logValidator;
 
         public AuthController(
             IMapper mapper,
             CreateUserUseCase createUserUseCase,
             LoginUseCase loginUseCase,
-            RefreshTokenUseCase refreshTokenUseCase
+            RefreshTokenUseCase refreshTokenUseCase,
+
+            IValidator<RegistrationContract> regValidator,
+            IValidator<LoginContract> logValidator
             )
         {
             this.mapper = mapper;
             this.createUserUseCase = createUserUseCase;
             this.loginUseCase = loginUseCase;
             this.refreshTokenUseCase = refreshTokenUseCase;
+            this.regValidator = regValidator;
+            this.logValidator = logValidator;
         }
         [HttpPost("registration")]
         public async Task<IActionResult> Registration([FromBody]RegistrationContract contract)
         {
-            // validation
+            await regValidator.ValidateAndThrowAsync( contract );
 
             var userModel = mapper.Map<UserModel>(contract);
 
@@ -39,17 +48,15 @@ namespace Library.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginContract contract)
         {
-            // validation
+            await logValidator.ValidateAndThrowAsync( contract );
 
-           var tokens = await loginUseCase.ExecuteAsync(contract.Email, contract.Password);
+            var tokens = await loginUseCase.ExecuteAsync(contract.Email, contract.Password);
 
             return Ok(tokens);
         }
         [HttpPost("refresh")]
         public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
         {
-            // validation
-
             var token = await refreshTokenUseCase.ExecuteAsync(refreshToken);
 
             return Ok(new { accessToken = token });

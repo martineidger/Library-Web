@@ -1,0 +1,36 @@
+﻿using AutoMapper;
+using Library.Application.Models;
+using Library.Core.Abstractions;
+using Library.Core.Entities;
+using Library.Core.Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Library.Application.UseCases.Books
+{
+    public class GetBooksByTitleUseCase : BasePagedUseCase<BookModel, BookEntity>
+    {
+        private readonly ILibraryUnitOfWork db;
+        private readonly IMapper mapper;
+
+        public GetBooksByTitleUseCase(ILibraryUnitOfWork db, IMapper mapper)
+        {
+            this.db = db;
+            this.mapper = mapper;
+        }
+        public async Task<PagedItems<BookModel>> ExecuteAsync(string title, int page, int size)
+        {
+            var booksList = await db.bookRepository.GetByTitleAsync(title, page, size) ??
+                throw new ObjectNotFoundException($"Error on GetBooksByTitleUseCase: list was empty");
+
+            /*var resBooks = booksList.Items.Where(b => b.AuthorID == authorId).ToList() ?? new();
+            booksList.Items = resBooks;*/
+
+            return MapPagedItems(booksList, mapper);
+            //return mapper.Map<List<BookModel>>();
+        }
+    }
+}

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Library.Api.Contracts;
 using Library.Application.Models;
 using Library.Application.UseCases.Books;
@@ -11,6 +12,7 @@ namespace Library.Api.Controllers
     [Route("[controller]")]
     public class BooksController : Controller
     {
+        private readonly IValidator<BookContract> validator;
         private readonly IMapper mapper;
         private readonly AddBookUseCase addBookUseCase;
         private readonly GetAllBooksUseCase getAllBooksUseCase;
@@ -19,8 +21,10 @@ namespace Library.Api.Controllers
         private readonly GetBookByISBNUseCase getBookByISBNUseCase;
         private readonly GetBooksByAuthorUseCase getBooksByAuthorUseCase;
         private readonly UpdateBookUseCase updateBookUseCase;
+        private readonly GetBooksByTitleUseCase getBooksByTitleUseCase;
 
         public BooksController(
+            IValidator<BookContract> validator,
             IMapper mapper,
             AddBookUseCase addBookUseCase,
             GetAllBooksUseCase getAllBooksUseCase,
@@ -28,8 +32,10 @@ namespace Library.Api.Controllers
             GetBookByIDUseCase getBookByIDUseCase,
             GetBookByISBNUseCase getBookByISBNUseCase,
             GetBooksByAuthorUseCase getBooksByAuthorUseCase,
-            UpdateBookUseCase updateBookUseCase)
+            UpdateBookUseCase updateBookUseCase, 
+            GetBooksByTitleUseCase getBooksByTitleUseCase)
         {
+            this.validator = validator;
             this.mapper = mapper;
             this.addBookUseCase = addBookUseCase;
             this.getAllBooksUseCase = getAllBooksUseCase;
@@ -38,57 +44,65 @@ namespace Library.Api.Controllers
             this.getBookByISBNUseCase = getBookByISBNUseCase;
             this.getBooksByAuthorUseCase = getBooksByAuthorUseCase;
             this.updateBookUseCase = updateBookUseCase;
+            this.getBooksByTitleUseCase = getBooksByTitleUseCase;
         }
-
 
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int size = 10)
         {
-            return Ok(await getAllBooksUseCase.ExecuteAsync(page, size));
+            var books = await getAllBooksUseCase.ExecuteAsync(page, size);
+            foreach (var book in books.Items)
+            {
+                Console.WriteLine(book.PickDate);
+            }
+            return Ok(books);
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] BookContract book) // добавлять сразу с автором
+        public async Task<IActionResult> Add([FromForm] BookContract book) // добавлять сразу с автором
         {
-            //add validation
+            await validator.ValidateAndThrowAsync(book);
 
             var bookModel = mapper.Map<BookModel>(book);
 
             return Ok(await addBookUseCase.ExecuteAsync(bookModel));
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            //validation
-
+            
             await deleteBookUseCase.ExecuteAsync(id);
             return NoContent();
         }
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            //valid
-
+           
             return Ok(await getBookByIDUseCase.ExecuteAsync(id));
         }
 
         [HttpGet("{isbn:length(10, 13)}")]
         public async Task<IActionResult> GetByISBN([FromRoute] string isbn)
         {
-            //valid
-
+            
             return Ok(await getBookByISBNUseCase.ExecuteAsync(isbn));
         }
         [HttpGet("author/{authorId:guid}")]
-        public async Task<IActionResult> GetByAuthor([FromRoute] Guid authorId, [FromRoute] int page = 1, [FromRoute] int size = 10)
+        public async Task<IActionResult> GetByAuthor([FromRoute] Guid authorId, [FromQuery] int page = 1, [FromQuery] int size = 10)
         {
             return Ok(await getBooksByAuthorUseCase.ExecuteAsync(authorId, page, size));
         }
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update([FromBody]BookContract book, Guid id)
+        [HttpGet("title={title:length(1,50)}")]
+        public async Task<IActionResult> GetByTitle(string title, [FromQuery] int page = 1, [FromQuery] int size = 10)
         {
-            //valid
+            return Ok(await getBooksByTitleUseCase.ExecuteAsync(title, page, size));
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> Update([FromForm]BookContract book, Guid id)
+        {
+            await validator.ValidateAndThrowAsync(book);
 
             var bookModel = mapper.Map<BookModel>(book);
             bookModel.Id = id;

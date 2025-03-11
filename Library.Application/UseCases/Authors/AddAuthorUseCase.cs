@@ -3,6 +3,7 @@ using Library.Application.Models;
 using Library.Core.Abstractions;
 using Library.Core.Abstractions.ServicesAbstractions;
 using Library.Core.Entities;
+using Library.Core.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,9 @@ namespace Library.Application.UseCases.Authors
         public async Task<Guid> ExecuteAsync(AuthorModel author)
         {
             var newAuthor = mapper.Map<AuthorEntity>(author);
+
+            if (await db.authorRepository.GetByFullNAMe(author.FirstName, author.Surname) != null)
+                throw new ObjectAlreadyExistsException($"Author {author.FirstName} {author.Surname} already exists.");
 
             var id = await db.authorRepository.AddAsync(newAuthor);
             await db.SaveChangesAsync();

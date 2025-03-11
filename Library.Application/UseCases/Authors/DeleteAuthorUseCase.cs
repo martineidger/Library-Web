@@ -18,7 +18,7 @@ namespace Library.Application.UseCases.Authors
         }
         public async Task ExecuteAsync(Guid id)
         {
-            if (db.authorRepository.GetByIdAsyhnc(id) == null)
+            if (await db.authorRepository.GetByIdAsyhnc(id) == null)
                 throw new ObjectNotFoundException($"Error on DeleteAuthorUseCase: no such author, id = {id}");
 
             db.authorRepository.Delete(id);

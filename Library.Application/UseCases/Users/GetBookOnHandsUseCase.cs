@@ -18,13 +18,13 @@ namespace Library.Application.UseCases.Users
         {
             this.db = db;
         }
-        public async Task ExecuteAsync(UserModel user, BookModel book)
+        public async Task<DateTime> ExecuteAsync(Guid userId, Guid bookId)
         {
-            var usEntity = await db.userRepository.GetByIdAsync(user.Id) ??
-                throw new ObjectNotFoundException($"Error on GetBookOnHandsUseCase: no such user, id = {user.Id}");
+            var usEntity = await db.userRepository.GetByIdAsync(userId) ??
+                throw new ObjectNotFoundException($"Error on GetBookOnHandsUseCase: no such user, id = {userId}");
 
-            var bookEntity = await db.bookRepository.GetByIdAsync(book.Id) ??
-                throw new ObjectNotFoundException($"Error on GetBookOnHandsUseCase: no such book, id = {book.Id}");
+            var bookEntity = await db.bookRepository.GetByIdAsync(bookId) ??
+                throw new ObjectNotFoundException($"Error on GetBookOnHandsUseCase: no such book, id = {bookId}");
 
 
             bookEntity.PickDate = DateTime.UtcNow;
@@ -33,6 +33,7 @@ namespace Library.Application.UseCases.Users
 
             await db.SaveChangesAsync();
 
+            return (DateTime)bookEntity.ReturnDate;
 
         }
     }

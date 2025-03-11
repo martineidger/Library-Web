@@ -6,7 +6,7 @@
         {
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("AdminOnly", policy =>
+                options.AddPolicy("Admin", policy =>
                     policy.RequireRole("Admin"));
 
             });

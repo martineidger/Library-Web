@@ -9,8 +9,9 @@ namespace Library.Core.Abstractions
 {
     public interface IBookRepository
     {
-        Task<BookEntity> GetByIdAsync(Guid id);
-        Task<BookEntity> GetByISBNAsync(string isbn);
+        Task<BookEntity?> GetByIdAsync(Guid id);
+        Task<BookEntity?> GetByISBNAsync(string isbn);
+        Task<PagedItems<BookEntity>> GetByTitleAsync(string title, int page, int size);
         Task<PagedItems<BookEntity>> GetAllAsync(int page, int size);
         Task<Guid> AddAsync(BookEntity entity);
         bool Delete(Guid id);
