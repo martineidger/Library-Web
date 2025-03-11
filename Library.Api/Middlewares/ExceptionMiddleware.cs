@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Library.Core.Exceptions;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Diagnostics;
 using System.Net;
@@ -28,6 +29,11 @@ namespace Library.Api.Middlewares
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 await HandleException(context, ex);
             }
+            catch(ArgumentNullException ex)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                await HandleException(context, ex);
+            }
             catch(ArgumentException ex)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -44,6 +50,11 @@ namespace Library.Api.Middlewares
                 await HandleException(context, ex);
             }
             catch(UnauthorizedAccessException ex)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                await HandleException(context, ex);
+            }
+            catch(SecurityTokenException ex)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                 await HandleException(context, ex);

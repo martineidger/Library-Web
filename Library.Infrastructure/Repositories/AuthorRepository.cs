@@ -36,14 +36,14 @@ namespace Library.Infrastructure.Repositories
 
         public async Task<PagedItems<AuthorEntity>> GetAllAsync(int page, int size)
         {
-            var query = context.Authors.AsNoTracking();
+            var query = context.Authors.Include(a => a.Books).AsNoTracking();
 
-            var totalItems = await query.CountAsync(); // Общее количество книг
+            var totalItems = await query.CountAsync(); 
 
             var items = await query
-                .Skip((page - 1) * size) // Пропускаем элементы
-                .Take(size) // Берем нужное количество
-                .ToListAsync(); // Загружаем в память
+                .Skip((page - 1) * size) 
+                .Take(size) 
+                .ToListAsync(); 
 
             return new PagedItems<AuthorEntity>
             {
@@ -57,12 +57,12 @@ namespace Library.Infrastructure.Repositories
 
         public async Task<List<AuthorEntity>> GetAllAsync()
         {
-            return await context.Authors.AsNoTracking().ToListAsync();
+            return await context.Authors.Include(a => a.Books).AsNoTracking().ToListAsync();
         }
 
         public async Task<AuthorEntity?> GetByFullNAMe(string name, string surname)
         {
-            return await context.Authors.FirstOrDefaultAsync(a => a.FirstName == name && a.Surname == surname);
+            return await context.Authors.Include(a => a.Books).FirstOrDefaultAsync(a => a.FirstName == name && a.Surname == surname);
         }
 
         public async Task<AuthorEntity?> GetByIdAsyhnc(Guid id)

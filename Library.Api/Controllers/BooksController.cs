@@ -51,15 +51,12 @@ namespace Library.Api.Controllers
         public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int size = 10)
         {
             var books = await getAllBooksUseCase.ExecuteAsync(page, size);
-            foreach (var book in books.Items)
-            {
-                Console.WriteLine(book.PickDate);
-            }
+            
             return Ok(books);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Add([FromForm] BookContract book) // добавлять сразу с автором
+        public async Task<IActionResult> Add([FromForm] BookContract book)
         {
             await validator.ValidateAndThrowAsync(book);
 
@@ -67,7 +64,7 @@ namespace Library.Api.Controllers
 
             return Ok(await addBookUseCase.ExecuteAsync(bookModel));
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
@@ -98,7 +95,7 @@ namespace Library.Api.Controllers
         {
             return Ok(await getBooksByTitleUseCase.ExecuteAsync(title, page, size));
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "Admin")]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update([FromForm]BookContract book, Guid id)
         {

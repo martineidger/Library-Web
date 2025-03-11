@@ -26,11 +26,8 @@ namespace Library.Application.UseCases.Books
             var booksList = await db.bookRepository.GetBookByAuthor(authorId, page, size) ??
                 throw new ObjectNotFoundException($"Error on GetBooksByAuthorUseCase: list was empty");
 
-            /*var resBooks = booksList.Items.Where(b => b.AuthorID == authorId).ToList() ?? new();
-            booksList.Items = resBooks;*/
 
             return MapPagedItems(booksList, mapper);
-            //return mapper.Map<List<BookModel>>();
         }
     }
 }

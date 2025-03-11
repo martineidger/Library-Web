@@ -1,0 +1,28 @@
+.book-list {
+    padding: 20px;
+}
+
+.book-list h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #444;
+}
+
+.book-list label {
+    display: block;
+    margin: 10px 0;
+}
+
+.book-list select,
+.book-list input {
+    margin-left: 10px;
+}
+
+.pagination {
+    margin-top: 20px;
+}
+
+.pagination button {
+    margin: 0 5px;
+    padding: 5px 10px;
+}

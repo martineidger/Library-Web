@@ -23,8 +23,6 @@ namespace Library.Infrastructure.Repositories
         }
         public async Task<Guid> AddAsync(BookEntity entity)
         {
-            /*if(context.Books.Any(b => b.ISBN.Equals(entity.ISBN, StringComparison.OrdinalIgnoreCase)))
-                throw new ObjectAlreadyExistsException($"Book with ISBN {entity.ISBN} already exists");*/
 
             await context.Books.AddAsync(entity);
             return entity.Id;
@@ -42,12 +40,12 @@ namespace Library.Infrastructure.Repositories
         {
             var query = context.Books.AsNoTracking();
 
-            var totalItems = await query.CountAsync(); // Общее количество книг
+            var totalItems = await query.CountAsync(); 
 
             var items = await query
-                .Skip((page - 1) * size) // Пропускаем элементы
-                .Take(size) // Берем нужное количество
-                .ToListAsync(); // Загружаем в память
+                .Skip((page - 1) * size) 
+                .Take(size) 
+                .ToListAsync(); 
 
             return new PagedItems<BookEntity>
             {
@@ -62,12 +60,12 @@ namespace Library.Infrastructure.Repositories
         public async Task<PagedItems<BookEntity>> GetBookByAuthor(Guid authorId, int page, int size)
         {
             var query = context.Books.AsNoTracking().Where(b => b.Author.Id == authorId);
-            var totalItems = await query.CountAsync(); // Общее количество книг
+            var totalItems = await query.CountAsync(); 
 
             var items = await query
-                .Skip((page - 1) * size) // Пропускаем элементы
-                .Take(size) // Берем нужное количество
-                .ToListAsync(); // Загружаем в память
+                .Skip((page - 1) * size) 
+                .Take(size) 
+                .ToListAsync(); 
 
             return new PagedItems<BookEntity>
             {
@@ -92,12 +90,12 @@ namespace Library.Infrastructure.Repositories
         public async Task<PagedItems<BookEntity>> GetByTitleAsync(string title, int page, int size)
         {
             var query = context.Books.AsNoTracking().Where(b => b.Title.Contains(title));
-            var totalItems = await query.CountAsync(); // Общее количество книг
+            var totalItems = await query.CountAsync(); 
 
             var items = await query
-                .Skip((page - 1) * size) // Пропускаем элементы
-                .Take(size) // Берем нужное количество
-                .ToListAsync(); // Загружаем в память
+                .Skip((page - 1) * size) 
+                .Take(size) 
+                .ToListAsync(); 
 
             return new PagedItems<BookEntity>
             {
@@ -111,20 +109,7 @@ namespace Library.Infrastructure.Repositories
 
         public async Task<Guid> UpdateAsync(BookEntity entity)
         {
-            /*
-            var entToUpdate = await context.Books.FirstOrDefaultAsync(b => b.Id == entity.Id);
-
-            entToUpdate.Title = entity.Title;
-            entToUpdate.Author = entity.Author;
-            entToUpdate.AuthorID = entity.AuthorID;
-            entToUpdate.ISBN = entity.ISBN;
-            entToUpdate.ImgPath = entity.ImgPath;
-            entToUpdate.ReturnDate = entity.ReturnDate;
-            entToUpdate.PickDate = entity.PickDate;
-            entToUpdate.Description = entity.Description;
-
-            return entToUpdate.Id;*/
-
+        
             var localEntity = context.Books.Local.FirstOrDefault(a => a.Id == entity.Id);
             if (localEntity != null)
             {

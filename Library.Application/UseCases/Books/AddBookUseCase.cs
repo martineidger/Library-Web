@@ -21,7 +21,6 @@ namespace Library.Application.UseCases.Books
         private readonly ILibraryUnitOfWork db;
         private readonly IMapper mapper;
 
-        //private string defFileName = "/App/BookCovers/Def.jpg";
         private string defFileName; 
 
         public AddBookUseCase(IWebHostEnvironment env, IImageService imageService, ILibraryUnitOfWork db, IMapper mapper)

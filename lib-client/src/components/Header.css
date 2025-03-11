@@ -1,0 +1,43 @@
+header {
+    background-color: #f4f4f4;
+    padding: 10px 20px;
+    margin: 0;
+    width: 100%;
+    text-align: center;
+    border-bottom: 2px solid #ccc;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+header h4 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+header button {
+    padding: 8px 12px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+header button:hover {
+    background-color: #0056b3;
+}
+
+header div {
+    display: flex;
+    align-items: center;
+}
+
+header p {
+    margin: 0 15px;
+    font-size: 16px;
+    color: #555;
+}

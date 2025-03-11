@@ -39,7 +39,7 @@ namespace Library.Test.RepositoryTests
 
             // Act
             var result = await _repository.AddAsync(authorEntity);
-            await _context.SaveChangesAsync(); // Сохраняем изменения
+            await _context.SaveChangesAsync(); 
 
             // Assert
             Assert.Equal(authorEntity.Id, result);
@@ -65,7 +65,7 @@ namespace Library.Test.RepositoryTests
             var exception = await Assert.ThrowsAsync<ArgumentException>(
                 async () => {
                     await _repository.AddAsync(authorEntity);
-                    await _context.SaveChangesAsync(); }); // Повторное добавление
+                    await _context.SaveChangesAsync(); }); 
             Assert.Contains("same key", exception.Message);
         }
     }

@@ -1,0 +1,31 @@
+services:
+  backend:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Postgres=Host=db;Port=5432;Database=LibraryDB;Username=postgres;Password=postgres
+    ports:
+      - "5000:8080"
+    
+  client:
+    ports:
+      - "5001:4173"
+
+  db:
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=LibraryDB
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  
+
+  proxy:
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./Library.Api/wwwroot/Covers:/usr/share/nginx/html
+    ports:
+      - "80:80" 
+
+volumes:
+  postgres_data:

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Library.Application.Services;
 using Library.Core.Abstractions.ServicesAbstractions;
 using Library.Api.Middlewares;
+using Library.Core.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -14,30 +15,20 @@ builder.Logging.AddConsole();
 
 builder.Services.AddCors(options =>
 {
-    //options.AddPolicy("AllowAllOrigins",
-    //    builder => builder
-    //        .AllowAnyOrigin() // Разрешить все источники
-    //        .AllowAnyMethod() // Разрешить все методы (GET, POST, и т.д.)
-    //        .AllowAnyHeader()); // Разрешить все заголовки
-    options.AddPolicy("AllowSpecificOrigin",
-            builder => builder.WithOrigins("http://localhost:5173")
-                              .AllowAnyMethod()
-                              .AllowAnyHeader());
+    options.AddPolicy("AllowAllOrigins",
+        builder => builder
+            .AllowAnyOrigin() 
+            .AllowAnyMethod() 
+            .AllowAnyHeader()); 
 });
 
 builder.Services.AddSwagger();
 
-builder.Services.AddDbContext<LibraryDbContext>(options =>
-{
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresLocal"));
-});
-
 builder.Services.AddValidation();
 
-/////////
 builder.Services.AddMappingProfiles();
 
-builder.Services.AddRepositories();
+builder.Services.AddRepositories(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddUseCases();
 
@@ -49,9 +40,14 @@ builder.Services.AddAuth(configuration);
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+    dbInitializer.Initialize(); 
+}
 
 app.UseMiddleware<ExceptionMiddleware>();
-app.UseCors("AllowSpecificOrigin");
+app.UseCors("AllowAllOrigins");
 
 
 app.UseStaticFiles();

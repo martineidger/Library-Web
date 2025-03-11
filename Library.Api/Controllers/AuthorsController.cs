@@ -44,7 +44,6 @@ namespace Library.Api.Controllers
             this.validator = validator;
         }
 
-        //[Authorize]
         [HttpGet()]
         public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int size = 10)
         {
@@ -55,7 +54,7 @@ namespace Library.Api.Controllers
         {
             return Ok(await getAuthorsWithoutPaginationUseCase.ExecuteAsync());
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] AuthorContract author) 
         {
@@ -65,7 +64,7 @@ namespace Library.Api.Controllers
 
             return Ok(await addAuthorUseCase.ExecuteAsync(authorModel));
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
@@ -78,7 +77,7 @@ namespace Library.Api.Controllers
         {
             return Ok(await getAuthorByIdUseCase.ExecuteAsync(id));
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "Admin")]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update([FromBody] AuthorContract author, [FromRoute] Guid id)
         {

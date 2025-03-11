@@ -27,7 +27,6 @@ namespace Library.Application.UseCases.Books
             var bookEntityes = await db.bookRepository.GetAllAsync(page, size) ??
                 throw new ObjectNotFoundException($"Error on GetAllBooksUseCase: list was empty");
 
-            //return mapper.Map<List<BookModel>>(bookEntityes);
             return MapPagedItems(bookEntityes, mapper);
         }
     }

@@ -22,9 +22,6 @@ namespace Library.Infrastructure.Repositories
 
         public async Task<Guid> AddAsync(UserEntity user)
         {
-            /*if (context.Users.Any(u => u.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase)))
-                throw new ObjectAlreadyExistsException($"User with email {user.Email} already exists");
-*/
             await context.Users.AddAsync(user);
             return user.Id;
         }
@@ -37,7 +34,7 @@ namespace Library.Infrastructure.Repositories
 
         public async Task<UserEntity?> GetByEmailAsync(string email)
         {
-            return await context.Users.FirstOrDefaultAsync(us => us.Email == email);
+            return await context.Users.Include(u => u.Books).FirstOrDefaultAsync(us => us.Email == email);
         }
 
         public async Task<UserEntity?> GetByIdAsync(Guid id)
@@ -49,12 +46,12 @@ namespace Library.Infrastructure.Repositories
         {
             var query = await context.Users.Include(u => u.Books).AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId);
             var books = query.Books as List<BookEntity>;
-            var totalItems = books.Count(); // Общее количество книг
+            var totalItems = books.Count(); 
 
             var items = books
-                .Skip((page - 1) * size) // Пропускаем элементы
-                .Take(size) // Берем нужное количество
-                .ToList(); // Загружаем в память
+                .Skip((page - 1) * size) 
+                .Take(size) 
+                .ToList(); 
 
             return new PagedItems<BookEntity>
             {

@@ -5,7 +5,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
 
 
 # Этот этап используется для сборки проекта службы
@@ -13,6 +12,9 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Library.Api/Library.Api.csproj", "Library.Api/"]
+COPY ["Library.Application/Library.Application.csproj", "Library.Application/"]
+COPY ["Library.Core/Library.Core.csproj", "Library.Core/"]
+COPY ["Library.Infrastructure/Library.Infrastructure.csproj", "Library.Infrastructure/"]
 RUN dotnet restore "./Library.Api/Library.Api.csproj"
 COPY . .
 WORKDIR "/src/Library.Api"

@@ -26,22 +26,9 @@ namespace Library.Application.UseCases.Authors
             var authEntities =  await db.authorRepository.GetAllAsync(page, size) ??
                 throw new ObjectNotFoundException($"Error on GetAllAuthorsUseCase: list was empty");
 
-            //return mapper.Map<List<AuthorModel>>(authEntities);
             return MapPagedItems(authEntities, mapper);
         }
 
-        /*private PagedItems<AuthorModel> MapPagedItems(PagedItems<AuthorEntity> source)
-        {
-            var result = new PagedItems<AuthorModel>
-            {
-                Items = mapper.Map<List<AuthorModel>>(source.Items),
-                TotalCount = source.TotalCount,
-                PageSize = source.PageSize,
-                CurrentPage = source.CurrentPage,
-                TotalPages = source.TotalPages
-            };
 
-            return result;
-        }*/
     }
 }

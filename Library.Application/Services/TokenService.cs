@@ -9,7 +9,6 @@ using Library.Core.Abstractions.ServicesAbstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-//using Newtonsoft.Json;
 
 namespace Library.Application.Services
 {
@@ -74,21 +73,6 @@ namespace Library.Application.Services
         {
             var userId = ValidateRefreshToken(refreshToken);
             var user = db.userRepository.GetByIdAsync(userId).Result;
-
-            /* var key = System.Text.Encoding.ASCII.GetBytes(secretKey);
-             var accessTokenDescriptor = new SecurityTokenDescriptor
-             {
-                 Subject = new ClaimsIdentity(new Claim[]
-                 {
-                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                     new Claim(ClaimTypes.Role, user.Role)
-                 }),
-                 Expires = DateTime.UtcNow.AddMinutes((int)TokenConstants.ACS_TOKEN_LIFE),
-                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-             };
-
-             var accessToken = tokenHandler.CreateToken(accessTokenDescriptor);
-             var accessTokenStr = tokenHandler.WriteToken(accessToken);*/
 
             var newAccessToken = GetAccesToken(userId, user.Role);
 
