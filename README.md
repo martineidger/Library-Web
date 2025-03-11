@@ -7,7 +7,7 @@
   git clone https://github.com/martineidger/Library-Web.git
   cd Library-Web
   ```
-3. Запустите проект: перейдите в папку Library.Api и запустите команду
+3. Запустите проект: убедитесь, что находитесь в одной папке с файлом docker-compose и запустите команду
    ```
    docker-compose up --build
    ```
