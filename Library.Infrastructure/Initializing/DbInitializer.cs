@@ -32,8 +32,8 @@ namespace Library.Infrastructure.Initializing
 
             var users = new UserEntity[]
             {
-            new UserEntity { Email = "user@example.com", HashPassword = BCrypt.Net.BCrypt.HashPassword("user_password"), DisplayName = "User", Role = "User" },
-            new UserEntity { Email = "admin@example.com", HashPassword = BCrypt.Net.BCrypt.HashPassword("admin_password"), DisplayName = "Admin", Role = "Admin" }
+            new UserEntity { Email = "user@example.com", HashPassword = BCrypt.Net.BCrypt.HashPassword("User123!"), DisplayName = "User", Role = "User" },
+            new UserEntity { Email = "admin@example.com", HashPassword = BCrypt.Net.BCrypt.HashPassword("Admin123!"), DisplayName = "Admin", Role = "Admin" }
             };
 
             try
