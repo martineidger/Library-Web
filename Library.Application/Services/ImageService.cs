@@ -30,8 +30,8 @@ namespace Library.Application.Services
 
         public async Task<string> SaveAsync(IFormFile file)
         {
-            //var foldName = "Covers";
-            var foldName = _storagePath;
+            var foldName = "Covers";
+            //var foldName = _storagePath;
 
             if (file == null || file.Length == 0)
             {
