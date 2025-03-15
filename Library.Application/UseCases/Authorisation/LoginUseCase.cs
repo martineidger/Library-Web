@@ -20,9 +20,9 @@ namespace Library.Application.UseCases.Authorisation
             this.db = db;
             this.tokenService = tokenService;
         }
-        public async Task<TokenModel> ExecuteAsync(string login, string password)
+        public async Task<TokenModel> ExecuteAsync(string login, string password, CancellationToken cancellationToken)
         {
-            var user = await db.userRepository.GetByEmailAsync(login) ??
+            var user = await db.userRepository.GetByEmailAsync(login, cancellationToken) ??
                 throw new ObjectNotFoundException($"Error on LoginUseCase: no such user (email {login})");
 
             if (!BCrypt.Net.BCrypt.Verify(password, user.HashPassword))

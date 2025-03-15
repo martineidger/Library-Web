@@ -21,31 +21,33 @@ namespace Library.Infrastructure.Repositories
         {
             this.context = context;
         }
-        public async Task<Guid> AddAsync(BookEntity entity)
+        public async Task<Guid> AddAsync(BookEntity entity, CancellationToken cancellationToken)
         {
 
-            await context.Books.AddAsync(entity);
+            await context.Books.AddAsync(entity, cancellationToken);
             return entity.Id;
         }
 
-        public bool Delete(Guid id)
+        public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            var entity = context.Books.Find(id);
+            var entity = await context.Books.FindAsync(new object[] { id }, cancellationToken);
             if (entity == null) return false;
+
             context.Books.Remove(entity);
+
             return true;
         }
 
-        public async Task<PagedItems<BookEntity>> GetAllAsync(int page, int size)
+        public async Task<PagedItems<BookEntity>> GetAllAsync(int page, int size, CancellationToken cancellationToken)
         {
             var query = context.Books.AsNoTracking();
 
-            var totalItems = await query.CountAsync(); 
+            var totalItems = await query.CountAsync(cancellationToken);
 
             var items = await query
-                .Skip((page - 1) * size) 
-                .Take(size) 
-                .ToListAsync(); 
+                .Skip((page - 1) * size)
+                .Take(size)
+                .ToListAsync(cancellationToken);
 
             return new PagedItems<BookEntity>
             {
@@ -57,15 +59,15 @@ namespace Library.Infrastructure.Repositories
             };
         }
 
-        public async Task<PagedItems<BookEntity>> GetBookByAuthor(Guid authorId, int page, int size)
+        public async Task<PagedItems<BookEntity>> GetBookByAuthor(Guid authorId, int page, int size, CancellationToken cancellationToken)
         {
             var query = context.Books.AsNoTracking().Where(b => b.Author.Id == authorId);
-            var totalItems = await query.CountAsync(); 
+            var totalItems = await query.CountAsync(cancellationToken); 
 
             var items = await query
                 .Skip((page - 1) * size) 
                 .Take(size) 
-                .ToListAsync(); 
+                .ToListAsync(cancellationToken); 
 
             return new PagedItems<BookEntity>
             {
@@ -78,24 +80,24 @@ namespace Library.Infrastructure.Repositories
         }
 
 
-        public async Task<BookEntity?> GetByIdAsync(Guid id)
+        public async Task<BookEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            return await context.Books.Include(b => b.Author).FirstOrDefaultAsync(b => b.Id == id);
+            return await context.Books.Include(b => b.Author).FirstOrDefaultAsync(b => b.Id == id, cancellationToken);
         }
 
-        public async Task<BookEntity?> GetByISBNAsync(string isbn)
+        public async Task<BookEntity?> GetByISBNAsync(string isbn, CancellationToken cancellationToken)
         {
-            return await context.Books.FirstOrDefaultAsync(b => b.ISBN == isbn);
+            return await context.Books.FirstOrDefaultAsync(b => b.ISBN == isbn,cancellationToken );
         }
-        public async Task<PagedItems<BookEntity>> GetByTitleAsync(string title, int page, int size)
+        public async Task<PagedItems<BookEntity>> GetByTitleAsync(string title, int page, int size, CancellationToken cancellationToken)
         {
             var query = context.Books.AsNoTracking().Where(b => b.Title.Contains(title));
-            var totalItems = await query.CountAsync(); 
+            var totalItems = await query.CountAsync(cancellationToken); 
 
             var items = await query
                 .Skip((page - 1) * size) 
                 .Take(size) 
-                .ToListAsync(); 
+                .ToListAsync(cancellationToken); 
 
             return new PagedItems<BookEntity>
             {
@@ -109,18 +111,19 @@ namespace Library.Infrastructure.Repositories
 
         public async Task<Guid> UpdateAsync(BookEntity entity)
         {
-        
+
             var localEntity = context.Books.Local.FirstOrDefault(a => a.Id == entity.Id);
+
             if (localEntity != null)
             {
                 context.Entry(localEntity).CurrentValues.SetValues(entity);
             }
             else
             {
-                context.Update(entity);
+                context.Books.Update(entity);
             }
 
-            return entity.Id;
+            return await Task.FromResult(entity.Id);
 
         }
     }

@@ -30,9 +30,9 @@ namespace Library.Infrastructure
             context.Dispose();
         }
 
-        public async Task SaveChangesAsync()
+        public async Task SaveChangesAsync(CancellationToken cancellationToken)
         {
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
         }
     }
 }

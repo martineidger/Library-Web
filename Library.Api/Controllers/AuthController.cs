@@ -37,27 +37,27 @@ namespace Library.Api.Controllers
             this.logValidator = logValidator;
         }
         [HttpPost("registration")]
-        public async Task<IActionResult> Registration([FromBody]RegistrationContract contract)
+        public async Task<IActionResult> Registration([FromBody]RegistrationContract contract, CancellationToken cancellationToken)
         {
             await regValidator.ValidateAndThrowAsync( contract );
 
             var userModel = mapper.Map<UserModel>(contract);
 
-            return Ok(new { userId = await createUserUseCase.ExecuteAsync(userModel)});  
+            return Ok(new { userId = await createUserUseCase.ExecuteAsync(userModel, cancellationToken)});  
         }
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginContract contract)
+        public async Task<IActionResult> Login([FromBody] LoginContract contract, CancellationToken cancellationToken)
         {
             await logValidator.ValidateAndThrowAsync( contract );
 
-            var tokens = await loginUseCase.ExecuteAsync(contract.Email, contract.Password);
+            var tokens = await loginUseCase.ExecuteAsync(contract.Email, contract.Password, cancellationToken);
 
             return Ok(tokens);
         }
         [HttpPost("refresh")]
-        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
+        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken, CancellationToken cancellationToken)
         {
-            var token = await refreshTokenUseCase.ExecuteAsync(refreshToken);
+            var token = await refreshTokenUseCase.ExecuteAsync(refreshToken, cancellationToken);
 
             return Ok(new { accessToken = token });
         }

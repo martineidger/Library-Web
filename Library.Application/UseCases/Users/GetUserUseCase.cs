@@ -21,9 +21,9 @@ namespace Library.Application.UseCases.Users
             this.db = db;
             this.mapper = mapper;
         }
-        public async Task<UserModel> ExecuteAsync(string email)
+        public async Task<UserModel> ExecuteAsync(string email, CancellationToken cancellationToken)
         {
-            var userEntity = await db.userRepository.GetByEmailAsync(email)??
+            var userEntity = await db.userRepository.GetByEmailAsync(email, cancellationToken)??
                 throw new ObjectNotFoundException($"Error on GetUserUseCase: no such user, email = {email}");
 
             return mapper.Map<UserModel>(userEntity);

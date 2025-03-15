@@ -20,10 +20,10 @@ namespace Library.Application.UseCases.Users
             this.db = db;
             this.mapper = mapper;
         }
-        public async Task<Guid> ExecuteAsync(UserModel user)
+        public async Task<Guid> ExecuteAsync(UserModel user, CancellationToken cancellationToken)
         {
-            var id = await db.userRepository.AddAsync(mapper.Map<UserEntity>(user));
-            await db.SaveChangesAsync();
+            var id = await db.userRepository.AddAsync(mapper.Map<UserEntity>(user), cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
 
             return id;
         }

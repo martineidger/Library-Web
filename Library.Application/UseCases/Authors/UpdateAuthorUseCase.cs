@@ -21,13 +21,13 @@ namespace Library.Application.UseCases.Authors
             this.db = db;
             this.mapper = mapper;
         }
-        public async Task ExecuteAsync(AuthorModel author)
+        public async Task ExecuteAsync(AuthorModel author, CancellationToken cancellationToken)
         {
-            if (await db.authorRepository.GetByIdAsyhnc(author.Id) == null)
+            if (await db.authorRepository.GetByIdAsyhnc(author.Id, cancellationToken) == null)
                 throw new ObjectNotFoundException($"Error on UpdateAuthorUseCase: no such author, id = {author.Id}");
 
             await db.authorRepository.UpdateAsync(mapper.Map<AuthorEntity>(author));
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync(cancellationToken);
         }
     }
 }

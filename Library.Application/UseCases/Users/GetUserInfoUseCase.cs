@@ -20,9 +20,9 @@ namespace Library.Application.UseCases.Users
             this.db = db;
             this.mapper = mapper;
         }
-        public async Task<UserModel> ExecuteAsync(Guid id)
+        public async Task<UserModel> ExecuteAsync(Guid id, CancellationToken cancellationToken)
         {
-            var userEntity = await db.userRepository.GetByIdAsync(id) ??
+            var userEntity = await db.userRepository.GetByIdAsync(id, cancellationToken) ??
                 throw new ObjectNotFoundException($"Error on GetUserUseCase: no such user, id = {id}");
 
             return mapper.Map<UserModel>(userEntity);

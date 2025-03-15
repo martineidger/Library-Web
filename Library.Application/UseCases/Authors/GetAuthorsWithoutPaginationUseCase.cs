@@ -21,9 +21,9 @@ namespace Library.Application.UseCases.Authors
             this.db = db;
             this.mapper = mapper;
         }
-        public async Task<List<AuthorModel>> ExecuteAsync()
+        public async Task<List<AuthorModel>> ExecuteAsync(CancellationToken cancellationToken)
         {
-            var authEntities = await db.authorRepository.GetAllAsync() ??
+            var authEntities = await db.authorRepository.GetAllAsync(cancellationToken) ??
                 throw new ObjectNotFoundException($"Error on GetAuthorsWithoutPaginationUseCase: list was empty");
 
             return mapper.Map<List<AuthorModel>>(authEntities);

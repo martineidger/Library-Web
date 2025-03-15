@@ -23,15 +23,15 @@ namespace Library.Application.UseCases.Authors
             this.db = db;
             this.mapper = mapper;
         }
-        public async Task<Guid> ExecuteAsync(AuthorModel author)
+        public async Task<Guid> ExecuteAsync(AuthorModel author, CancellationToken cancellationToken)
         {
             var newAuthor = mapper.Map<AuthorEntity>(author);
 
-            if (await db.authorRepository.GetByFullNAMe(author.FirstName, author.Surname) != null)
+            if (await db.authorRepository.GetByFullNAMe(author.FirstName, author.Surname, cancellationToken) != null)
                 throw new ObjectAlreadyExistsException($"Author {author.FirstName} {author.Surname} already exists.");
 
-            var id = await db.authorRepository.AddAsync(newAuthor);
-            await db.SaveChangesAsync();
+            var id = await db.authorRepository.AddAsync(newAuthor, cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
 
             return id;
         }

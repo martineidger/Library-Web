@@ -21,17 +21,17 @@ namespace Library.Application.UseCases.Authorisation
             this.db = db;
             this.mapper = mapper;
         }
-        public async Task<Guid> ExecuteAsync(UserModel user)
+        public async Task<Guid> ExecuteAsync(UserModel user, CancellationToken cancellationToken)
         {
             var userEntity = mapper.Map<UserEntity>(user);
 
-            if (await db.userRepository.GetByEmailAsync(user.Email) != null)
+            if (await db.userRepository.GetByEmailAsync(user.Email, cancellationToken) != null)
                 throw new ObjectAlreadyExistsException($"User with email {user.Email} already exists.");
 
             userEntity.HashPassword = BCrypt.Net.BCrypt.HashPassword(user.Password); 
 
-            var newId = await db.userRepository.AddAsync(userEntity);
-            await db.SaveChangesAsync();
+            var newId = await db.userRepository.AddAsync(userEntity, cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
             return newId;
         }
     }

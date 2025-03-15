@@ -17,13 +17,13 @@ namespace Library.Application.UseCases.Books
         {
             this.db = db;
         }
-        public async Task ExecuteAsync(Guid id)
+        public async Task ExecuteAsync(Guid id, CancellationToken cancellationToken)
         {
-            if (await db.bookRepository.GetByIdAsync(id) == null)
+            if (await db.bookRepository.GetByIdAsync(id, cancellationToken) == null)
                 throw new ObjectNotFoundException($"Error on DeleteBookUseCase: no such book, id = {id}");
 
-            db.bookRepository.Delete(id);
-            await db.SaveChangesAsync();
+            await db.bookRepository.DeleteAsync(id, cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
         }
     }
 }

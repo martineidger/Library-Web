@@ -21,13 +21,13 @@ namespace Library.Application.UseCases.Users
             this.db = db;
             this.mapper = mapper;
         }
-        public async Task ExecuteAsync(UserModel user)
+        public async Task ExecuteAsync(UserModel user, CancellationToken cancellationToken)
         {
-            if (db.userRepository.GetByIdAsync(user.Id) == null)
+            if (db.userRepository.GetByIdAsync(user.Id, cancellationToken) == null)
                 throw new ObjectNotFoundException($"Error on UpdateUserUseCase: no such user, id = {user.Id}");
 
             await db.userRepository.UpdateAsync(mapper.Map<UserEntity>(user));
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync(cancellationToken);
         }
     }
 }

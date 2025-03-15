@@ -18,19 +18,19 @@ namespace Library.Application.UseCases.Users
         {
             this.db = db;
         }
-        public async Task ExecuteAsync(UserModel user, BookModel book)
+        public async Task ExecuteAsync(UserModel user, BookModel book, CancellationToken cancellationToken)
         {
-            var usEntity = await db.userRepository.GetByIdAsync(user.Id) ??
+            var usEntity = await db.userRepository.GetByIdAsync(user.Id, cancellationToken) ??
                 throw new ObjectNotFoundException($"Error on ReturnBookUseCase: no such user, id = {user.Id}");
 
-            var bookEntity = await db.bookRepository.GetByIdAsync(book.Id) ??
+            var bookEntity = await db.bookRepository.GetByIdAsync(book.Id, cancellationToken) ??
                 throw new ObjectNotFoundException($"Error on ReturnBookUseCase: no such book, id = {book.Id}");
 
             usEntity.Books.Remove(bookEntity);
             bookEntity.PickDate = null;
             bookEntity.ReturnDate = null;
 
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync(cancellationToken);
         }
     }
 }

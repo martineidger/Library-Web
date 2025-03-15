@@ -21,9 +21,9 @@ namespace Library.Application.UseCases.Authors
             this.db = db;
             this.mapper = mapper;
         }
-        public async Task<AuthorModel> ExecuteAsync(Guid id)
+        public async Task<AuthorModel> ExecuteAsync(Guid id, CancellationToken cancellationToken)
         {
-            var authorEntity =  await db.authorRepository.GetByIdAsyhnc(id) ??
+            var authorEntity =  await db.authorRepository.GetByIdAsyhnc(id, cancellationToken) ??
                 throw new ObjectNotFoundException($"Error on GetAuthorByIdUseCase: no such author, id = {id}");
 
             return mapper.Map<AuthorModel>(authorEntity);

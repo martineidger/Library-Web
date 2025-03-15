@@ -18,12 +18,12 @@ namespace Library.Application.UseCases.Users
         {
             this.db = db;
         }
-        public async Task<DateTime> ExecuteAsync(Guid userId, Guid bookId)
+        public async Task<DateTime> ExecuteAsync(Guid userId, Guid bookId, CancellationToken cancellationToken)
         {
-            var usEntity = await db.userRepository.GetByIdAsync(userId) ??
+            var usEntity = await db.userRepository.GetByIdAsync(userId, cancellationToken) ??
                 throw new ObjectNotFoundException($"Error on GetBookOnHandsUseCase: no such user, id = {userId}");
 
-            var bookEntity = await db.bookRepository.GetByIdAsync(bookId) ??
+            var bookEntity = await db.bookRepository.GetByIdAsync(bookId, cancellationToken) ??
                 throw new ObjectNotFoundException($"Error on GetBookOnHandsUseCase: no such book, id = {bookId}");
 
 
@@ -31,7 +31,7 @@ namespace Library.Application.UseCases.Users
             bookEntity.ReturnDate = DateTime.UtcNow.AddDays(10);
             usEntity.Books.Add(bookEntity);
 
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync(cancellationToken);
 
             return (DateTime)bookEntity.ReturnDate;
 

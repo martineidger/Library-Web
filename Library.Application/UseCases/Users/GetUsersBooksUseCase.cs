@@ -21,12 +21,12 @@ namespace Library.Application.UseCases.Users
             this.db = db;
             this.mapper = mapper;
         }
-        public async Task<PagedItems<BookModel>> ExecuteAsync(Guid authorId, int page, int size)
+        public async Task<PagedItems<BookModel>> ExecuteAsync(Guid authorId, int page, int size, CancellationToken cancellationToken)
         {
-            var authorEnt = await db.userRepository.GetByIdAsync(authorId) ??
+            var authorEnt = await db.userRepository.GetByIdAsync(authorId, cancellationToken) ??
                 throw new ObjectNotFoundException($"Error on GetUsersBooksUseCase: no user (id: {authorId})");
 
-            var booksList = await db.userRepository.GetUsersBooks(authorId, page, size) ??
+            var booksList = await db.userRepository.GetUsersBooks(authorId, page, size, cancellationToken) ??
                 throw new ObjectNotFoundException($"Error on GetUsersBooksUseCase: empty list");
 
             return MapPagedItems(booksList, mapper);

@@ -39,11 +39,13 @@ namespace Library.Test.UseCasesTests
                 BirthDate = new DateTime(1980, 1, 1),
                 Country = "USA"
             };
-            _mockUnitOfWork.Setup(u => u.authorRepository.GetByFullNAMe(authorModel.FirstName, authorModel.Surname))
+            var cancellationToken = CancellationToken.None;
+
+            _mockUnitOfWork.Setup(u => u.authorRepository.GetByFullNAMe(authorModel.FirstName, authorModel.Surname, cancellationToken))
                            .ReturnsAsync(new AuthorEntity());
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ObjectAlreadyExistsException>(() => _useCase.ExecuteAsync(authorModel));
+            var exception = await Assert.ThrowsAsync<ObjectAlreadyExistsException>(() => _useCase.ExecuteAsync(authorModel, cancellationToken));
             Assert.Equal($"Author John Doe already exists.", exception.Message);
         }
 
@@ -58,18 +60,20 @@ namespace Library.Test.UseCasesTests
                 BirthDate = new DateTime(1985, 5, 5),
                 Country = "USA"
             };
+            var cancellationToken = CancellationToken.None;
+
             var authorEntity = new AuthorEntity { Id = Guid.NewGuid() };
             _mockMapper.Setup(m => m.Map<AuthorEntity>(authorModel)).Returns(authorEntity);
-            _mockUnitOfWork.Setup(u => u.authorRepository.GetByFullNAMe(authorModel.FirstName, authorModel.Surname))
+            _mockUnitOfWork.Setup(u => u.authorRepository.GetByFullNAMe(authorModel.FirstName, authorModel.Surname, cancellationToken))
                            .ReturnsAsync((AuthorEntity)null);
-            _mockUnitOfWork.Setup(u => u.authorRepository.AddAsync(authorEntity)).ReturnsAsync(authorEntity.Id);
+            _mockUnitOfWork.Setup(u => u.authorRepository.AddAsync(authorEntity, cancellationToken)).ReturnsAsync(authorEntity.Id);
 
             // Act
-            var result = await _useCase.ExecuteAsync(authorModel);
+            var result = await _useCase.ExecuteAsync(authorModel, cancellationToken);
 
             // Assert
             Assert.Equal(authorEntity.Id, result);
-            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(cancellationToken), Times.Once);
         }
     }
 }

@@ -16,13 +16,13 @@ namespace Library.Application.UseCases.Users
         {
             this.db = db;
         }
-        public async Task ExecuteAsync(Guid id)
+        public async Task ExecuteAsync(Guid id, CancellationToken cancellationToken)
         {
-            if (db.userRepository.GetByIdAsync(id) == null)
+            if (db.userRepository.GetByIdAsync(id, cancellationToken) == null)
                 throw new ObjectNotFoundException($"Error on DeleteUserUseCase: no such user, id = {id}");
 
-            db.userRepository.Delete(id);
-            await db.SaveChangesAsync();
+            await db.userRepository.DeleteAsync(id, cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
         }
     }
 }

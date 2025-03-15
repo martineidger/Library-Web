@@ -48,63 +48,63 @@ namespace Library.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int size = 10)
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken, [FromQuery] int page = 1, [FromQuery] int size = 10)
         {
-            var books = await getAllBooksUseCase.ExecuteAsync(page, size);
+            var books = await getAllBooksUseCase.ExecuteAsync(page, size, cancellationToken);
             
             return Ok(books);
         }
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Add([FromForm] BookContract book)
+        public async Task<IActionResult> Add([FromForm] BookContract book, CancellationToken cancellationToken)
         {
             await validator.ValidateAndThrowAsync(book);
 
             var bookModel = mapper.Map<BookModel>(book);
 
-            return Ok(await addBookUseCase.ExecuteAsync(bookModel));
+            return Ok(await addBookUseCase.ExecuteAsync(bookModel, cancellationToken));
         }
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             
-            await deleteBookUseCase.ExecuteAsync(id);
+            await deleteBookUseCase.ExecuteAsync(id, cancellationToken);
             return NoContent();
         }
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken cancellationToken)
         {
            
-            return Ok(await getBookByIDUseCase.ExecuteAsync(id));
+            return Ok(await getBookByIDUseCase.ExecuteAsync(id, cancellationToken));
         }
 
         [HttpGet("{isbn:length(10, 13)}")]
-        public async Task<IActionResult> GetByISBN([FromRoute] string isbn)
+        public async Task<IActionResult> GetByISBN([FromRoute] string isbn, CancellationToken cancellationToken)
         {
             
-            return Ok(await getBookByISBNUseCase.ExecuteAsync(isbn));
+            return Ok(await getBookByISBNUseCase.ExecuteAsync(isbn, cancellationToken));
         }
         [HttpGet("author/{authorId:guid}")]
-        public async Task<IActionResult> GetByAuthor([FromRoute] Guid authorId, [FromQuery] int page = 1, [FromQuery] int size = 10)
+        public async Task<IActionResult> GetByAuthor(CancellationToken cancellationToken,[FromRoute] Guid authorId, [FromQuery] int page = 1, [FromQuery] int size = 10)
         {
-            return Ok(await getBooksByAuthorUseCase.ExecuteAsync(authorId, page, size));
+            return Ok(await getBooksByAuthorUseCase.ExecuteAsync(authorId, page, size, cancellationToken));
         }
         [HttpGet("title={title:length(1,50)}")]
-        public async Task<IActionResult> GetByTitle(string title, [FromQuery] int page = 1, [FromQuery] int size = 10)
+        public async Task<IActionResult> GetByTitle(CancellationToken cancellationToken, string title, [FromQuery] int page = 1, [FromQuery] int size = 10)
         {
-            return Ok(await getBooksByTitleUseCase.ExecuteAsync(title, page, size));
+            return Ok(await getBooksByTitleUseCase.ExecuteAsync(title, page, size, cancellationToken));
         }
         [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update([FromForm]BookContract book, Guid id)
+        public async Task<IActionResult> Update([FromForm]BookContract book, Guid id, CancellationToken cancellationToken)
         {
             await validator.ValidateAndThrowAsync(book);
 
             var bookModel = mapper.Map<BookModel>(book);
             bookModel.Id = id;
 
-            await updateBookUseCase.ExecuteAsync(bookModel);
+            await updateBookUseCase.ExecuteAsync(bookModel, cancellationToken);
 
             return NoContent();
 

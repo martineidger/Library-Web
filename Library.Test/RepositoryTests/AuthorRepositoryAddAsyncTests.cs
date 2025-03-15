@@ -36,9 +36,10 @@ namespace Library.Test.RepositoryTests
                 BirthDate = new DateTime(1980, 1, 1),
                 Country = "USA",
             };
+            var cancellationToken = CancellationToken.None;
 
             // Act
-            var result = await _repository.AddAsync(authorEntity);
+            var result = await _repository.AddAsync(authorEntity, cancellationToken);
             await _context.SaveChangesAsync(); 
 
             // Assert
@@ -58,13 +59,14 @@ namespace Library.Test.RepositoryTests
                 BirthDate = new DateTime(1980, 1, 1),
                 Country = "USA",
             };
-            await _repository.AddAsync(authorEntity);
+            var cancellationToken = CancellationToken.None;
+            await _repository.AddAsync(authorEntity, cancellationToken);
             await _context.SaveChangesAsync();
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<ArgumentException>(
                 async () => {
-                    await _repository.AddAsync(authorEntity);
+                    await _repository.AddAsync(authorEntity, cancellationToken);
                     await _context.SaveChangesAsync(); }); 
             Assert.Contains("same key", exception.Message);
         }

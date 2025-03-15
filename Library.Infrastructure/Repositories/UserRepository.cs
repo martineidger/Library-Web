@@ -20,38 +20,42 @@ namespace Library.Infrastructure.Repositories
             this.context = context;
         }
 
-        public async Task<Guid> AddAsync(UserEntity user)
+        public async Task<Guid> AddAsync(UserEntity user, CancellationToken cancellationToken)
         {
-            await context.Users.AddAsync(user);
+            await context.Users.AddAsync(user, cancellationToken);
             return user.Id;
         }
 
-        public void Delete(Guid id)
+        public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            var usr = context.Users.FirstOrDefault(u=> u.Id == id);
-            context.Users.Remove(usr);
+            var entity = await context.Books.FindAsync(new object[] { id }, cancellationToken);
+            if (entity == null) return false;
+
+            context.Books.Remove(entity);
+
+            return true;
         }
 
-        public async Task<UserEntity?> GetByEmailAsync(string email)
+        public async Task<UserEntity?> GetByEmailAsync(string email, CancellationToken cancellationToken)
         {
-            return await context.Users.Include(u => u.Books).FirstOrDefaultAsync(us => us.Email == email);
+            return await context.Users.Include(u => u.Books).FirstOrDefaultAsync(us => us.Email == email, cancellationToken);
         }
 
-        public async Task<UserEntity?> GetByIdAsync(Guid id)
+        public async Task<UserEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            return await context.Users.FindAsync(id);
+            return await context.Users.FindAsync(id, cancellationToken);
         }
 
-        public async Task<PagedItems<BookEntity>> GetUsersBooks(Guid userId, int page, int size)
+        public async Task<PagedItems<BookEntity>> GetUsersBooks(Guid userId, int page, int size, CancellationToken cancellationToken)
         {
-            var query = await context.Users.Include(u => u.Books).AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId);
-            var books = query.Books as List<BookEntity>;
-            var totalItems = books.Count(); 
+            var query = await context.Users.Include(u => u.Books).AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+            var books = (IQueryable<BookEntity>)query.Books;
+            var totalItems = await books.CountAsync(cancellationToken); 
 
-            var items = books
+            var items = await books
                 .Skip((page - 1) * size) 
                 .Take(size) 
-                .ToList(); 
+                .ToListAsync(cancellationToken); 
 
             return new PagedItems<BookEntity>
             {
@@ -75,7 +79,7 @@ namespace Library.Infrastructure.Repositories
                 context.Update(entity);
             }
 
-            return entity.Id;
+            return await Task.FromResult(entity.Id);
         }
     }
 }

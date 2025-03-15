@@ -45,48 +45,48 @@ namespace Library.Api.Controllers
         }
 
         [HttpGet()]
-        public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int size = 10)
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken, [FromQuery] int page = 1, [FromQuery] int size = 10)
         {
-            return Ok(await getAllAuthorsUseCase.ExecuteAsync(page, size));
+            return Ok(await getAllAuthorsUseCase.ExecuteAsync(page, size, cancellationToken));
         }
         [HttpGet("full")]
-        public async Task<IActionResult> GetAllFull()
+        public async Task<IActionResult> GetAllFull(CancellationToken cancellationToken)
         {
-            return Ok(await getAuthorsWithoutPaginationUseCase.ExecuteAsync());
+            return Ok(await getAuthorsWithoutPaginationUseCase.ExecuteAsync(cancellationToken));
         }
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] AuthorContract author) 
+        public async Task<IActionResult> Add(CancellationToken cancellationToken, [FromBody] AuthorContract author) 
         {
             await validator.ValidateAndThrowAsync(author);
 
             var authorModel = mapper.Map<AuthorModel>(author);
 
-            return Ok(await addAuthorUseCase.ExecuteAsync(authorModel));
+            return Ok(await addAuthorUseCase.ExecuteAsync(authorModel, cancellationToken));
         }
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             
-            await deleteAuthorUseCase.ExecuteAsync(id);
+            await deleteAuthorUseCase.ExecuteAsync(id, cancellationToken);
             return NoContent();
         }
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken cancellationToken)
         {
-            return Ok(await getAuthorByIdUseCase.ExecuteAsync(id));
+            return Ok(await getAuthorByIdUseCase.ExecuteAsync(id, cancellationToken));
         }
         [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update([FromBody] AuthorContract author, [FromRoute] Guid id)
+        public async Task<IActionResult> Update([FromBody] AuthorContract author, [FromRoute] Guid id, CancellationToken cancellation)
         {
             await validator.ValidateAndThrowAsync(author);
 
             var authorModel = mapper.Map<AuthorModel>(author);
 
             authorModel.Id = id;
-            await updateAuthorUseCase.ExecuteAsync(authorModel);
+            await updateAuthorUseCase.ExecuteAsync(authorModel, cancellation);
 
             return NoContent();
 

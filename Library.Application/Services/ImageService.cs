@@ -18,7 +18,6 @@ namespace Library.Application.Services
         public ImageService(IWebHostEnvironment env)
         {
             _env = env;
-            //_storagePath =  "/Covers";
             _storagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
 
             if (!Directory.Exists(_storagePath))
@@ -51,15 +50,22 @@ namespace Library.Application.Services
                 throw new ArgumentException("File does not have a valid image extension.");
             }
 
-            var uniqueFileName = Guid.NewGuid().ToString() + fileExtension;
-            var filePath = Path.Combine(_storagePath, uniqueFileName);
+            var uniqueFileName = GenerateRandomNumberString() + fileExtension;
+            var filePath = Path.Combine(foldName, uniqueFileName);
 
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", foldName);
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            using (var stream = new FileStream(Path.Combine(uploadsFolder, uniqueFileName), FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }
+            var resultFileName = $"{foldName}/{uniqueFileName}";
 
-            return $"/{foldName}/{uniqueFileName}";
+            return resultFileName;
         }
 
         public async Task<bool> DeleteAsync(string fileName)
@@ -73,6 +79,19 @@ namespace Library.Application.Services
 
             File.Delete(filePath);
             return await Task.FromResult(true); 
+        }
+        private static string GenerateRandomNumberString(int length = 8)
+        {
+            Random random = new();
+            char[] digits = "0123456789".ToCharArray();
+            char[] randomString = new char[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                randomString[i] = digits[random.Next(digits.Length)];
+            }
+
+            return new string(randomString);
         }
     }
 }

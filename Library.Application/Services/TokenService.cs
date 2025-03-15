@@ -69,10 +69,10 @@ namespace Library.Application.Services
             return codedRefreshToken;
         }
 
-        public string RefreshToken(string refreshToken)
+        public string RefreshToken(string refreshToken, CancellationToken cancellationToken)
         {
             var userId = ValidateRefreshToken(refreshToken);
-            var user = db.userRepository.GetByIdAsync(userId).Result;
+            var user = db.userRepository.GetByIdAsync(userId, cancellationToken).Result;
 
             var newAccessToken = GetAccesToken(userId, user.Role);
 

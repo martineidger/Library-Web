@@ -19,31 +19,33 @@ namespace Library.Infrastructure.Repositories
         {
             this.context = context;
         }
-        public async Task<Guid> AddAsync(AuthorEntity entity)
+        public async Task<Guid> AddAsync(AuthorEntity entity, CancellationToken cancellationToken)
         {
                 
-            await context.Authors.AddAsync(entity);
+            await context.Authors.AddAsync(entity, cancellationToken);
             return entity.Id;
         }
 
-        public bool Delete(Guid id)
+        public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            var entity = context.Authors.Find(id);
+            var entity = await context.Authors.FindAsync(new object[] { id }, cancellationToken);
             if (entity == null) return false;
+
             context.Authors.Remove(entity);
+
             return true;
         }
 
-        public async Task<PagedItems<AuthorEntity>> GetAllAsync(int page, int size)
+        public async Task<PagedItems<AuthorEntity>> GetAllAsync(int page, int size, CancellationToken cancellationToken)
         {
             var query = context.Authors.Include(a => a.Books).AsNoTracking();
 
-            var totalItems = await query.CountAsync(); 
+            var totalItems = await query.CountAsync(cancellationToken); 
 
             var items = await query
                 .Skip((page - 1) * size) 
                 .Take(size) 
-                .ToListAsync(); 
+                .ToListAsync(cancellationToken); 
 
             return new PagedItems<AuthorEntity>
             {
@@ -55,19 +57,19 @@ namespace Library.Infrastructure.Repositories
             };
         }
 
-        public async Task<List<AuthorEntity>> GetAllAsync()
+        public async Task<List<AuthorEntity>> GetAllAsync(CancellationToken cancellationToken)
         {
-            return await context.Authors.Include(a => a.Books).AsNoTracking().ToListAsync();
+            return await context.Authors.Include(a => a.Books).AsNoTracking().ToListAsync(cancellationToken);
         }
 
-        public async Task<AuthorEntity?> GetByFullNAMe(string name, string surname)
+        public async Task<AuthorEntity?> GetByFullNAMe(string name, string surname, CancellationToken cancellationToken)
         {
-            return await context.Authors.Include(a => a.Books).FirstOrDefaultAsync(a => a.FirstName == name && a.Surname == surname);
+            return await context.Authors.Include(a => a.Books).FirstOrDefaultAsync(a => a.FirstName == name && a.Surname == surname, cancellationToken);
         }
 
-        public async Task<AuthorEntity?> GetByIdAsyhnc(Guid id)
+        public async Task<AuthorEntity?> GetByIdAsyhnc(Guid id, CancellationToken cancellationToken)
         {
-            return await context.Authors.FindAsync(id);
+            return await context.Authors.FindAsync(id, cancellationToken);
         }
 
         public async Task<Guid> UpdateAsync(AuthorEntity entity)
@@ -82,7 +84,7 @@ namespace Library.Infrastructure.Repositories
                 context.Update(entity);
             }
 
-            return entity.Id;
+            return await Task.FromResult(entity.Id);
         }
     }
 }

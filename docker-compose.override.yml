@@ -23,7 +23,7 @@ services:
   proxy:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./Library.Api/wwwroot/Covers:/usr/share/nginx/html
+      - ./dock/wwwroot/covers:/usr/share/nginx/html
     ports:
       - "80:80" 
 

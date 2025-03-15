@@ -21,13 +21,13 @@ namespace Library.Application.UseCases.Books
             this.db = db;
             this.mapper = mapper;
         }
-        public async Task ExecuteAsync(BookModel book)
+        public async Task ExecuteAsync(BookModel book, CancellationToken cancellationToken)
         {
-            if (await db.bookRepository.GetByIdAsync(book.Id) == null)
+            if (await db.bookRepository.GetByIdAsync(book.Id, cancellationToken) == null)
                 throw new ObjectNotFoundException($"Error on UpdateBookUseCase: no such book, id = {book.Id}");
 
             await db.bookRepository.UpdateAsync(mapper.Map<BookEntity>(book));
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync(cancellationToken);
         }
     }
 }

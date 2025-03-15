@@ -31,11 +31,13 @@ namespace Library.Test.UseCasesTests
         public async Task ExecuteAsync_ShouldThrowException_WhenNoAuthorsFound()
         {
             // Arrange
-            _mockUnitOfWork.Setup(u => u.authorRepository.GetAllAsync(It.IsAny<int>(), It.IsAny<int>()))
+            var cancellationToken = CancellationToken.None;
+
+            _mockUnitOfWork.Setup(u => u.authorRepository.GetAllAsync(It.IsAny<int>(), It.IsAny<int>(), cancellationToken))
                            .ReturnsAsync((PagedItems<AuthorEntity>)null);
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ObjectNotFoundException>(() => _useCase.ExecuteAsync(1, 10));
+            var exception = await Assert.ThrowsAsync<ObjectNotFoundException>(() => _useCase.ExecuteAsync(1, 10, cancellationToken));
             Assert.Equal("Error on GetAllAuthorsUseCase: list was empty", exception.Message);
         }
 
@@ -55,7 +57,8 @@ namespace Library.Test.UseCasesTests
                 CurrentPage = 1,
                 TotalPages = 1
             };
-            _mockUnitOfWork.Setup(u => u.authorRepository.GetAllAsync(1, 10)).ReturnsAsync(authorEntities);
+            var cancellationToken = CancellationToken.None;
+            _mockUnitOfWork.Setup(u => u.authorRepository.GetAllAsync(1, 10, cancellationToken)).ReturnsAsync(authorEntities);
             _mockMapper.Setup(m => m.Map<List<AuthorModel>>(It.IsAny<List<AuthorEntity>>()))
                        .Returns(new List<AuthorModel>
                        {
@@ -64,7 +67,7 @@ namespace Library.Test.UseCasesTests
                        });
 
             // Act
-            var result = await _useCase.ExecuteAsync(1, 10);
+            var result = await _useCase.ExecuteAsync(1, 10, cancellationToken);
 
             // Assert
             Assert.Equal(2, result.TotalCount);

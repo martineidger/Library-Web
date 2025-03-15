@@ -32,11 +32,11 @@ namespace Library.Application.UseCases.Books
 
             defFileName = Path.Combine("Covers", "def.jpg");
         }
-        public async Task<Guid> ExecuteAsync(BookModel newBook)
+        public async Task<Guid> ExecuteAsync(BookModel newBook, CancellationToken cancellationToken)
         {
             var bookEnt = mapper.Map<BookEntity>(newBook);
 
-            if (await db.bookRepository.GetByISBNAsync(newBook.ISBN) != null)
+            if (await db.bookRepository.GetByISBNAsync(newBook.ISBN, cancellationToken) != null)
                 throw new ObjectAlreadyExistsException($"Book with ISBN {newBook.ISBN} already exists.");
 
             if (newBook.ImgFile != null)
@@ -46,11 +46,11 @@ namespace Library.Application.UseCases.Books
             }
             else bookEnt.ImgPath = defFileName;
             
-            bookEnt.Author = await db.authorRepository.GetByIdAsyhnc(newBook.AuthorID)??
+            bookEnt.Author = await db.authorRepository.GetByIdAsyhnc(newBook.AuthorID, cancellationToken)??
                 throw new ObjectNotFoundException($"Error on AddBookUseCase: no such author ({newBook.AuthorID})");
 
-            var id = await db.bookRepository.AddAsync(bookEnt);
-            await db.SaveChangesAsync();
+            var id = await db.bookRepository.AddAsync(bookEnt, cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
 
             return id;
         }

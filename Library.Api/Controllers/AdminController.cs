@@ -33,20 +33,20 @@ namespace Library.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAdmin([FromBody] RegistrationContract newAdmin)
+        public async Task<IActionResult> AddAdmin([FromBody] RegistrationContract newAdmin, CancellationToken cancellationToken)
         {
             await validator.ValidateAndThrowAsync(newAdmin);
 
             var adminModel = mapper.Map<UserModel>(newAdmin);
             adminModel.Role = "Admin";
 
-            return Ok(await createUserUseCase.ExecuteAsync(adminModel));
+            return Ok(await createUserUseCase.ExecuteAsync(adminModel, cancellationToken));
         }
 
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
-            await deleteUserUseCase.ExecuteAsync(id);
+            await deleteUserUseCase.ExecuteAsync(id, cancellationToken);
             return NoContent();
         }
     }

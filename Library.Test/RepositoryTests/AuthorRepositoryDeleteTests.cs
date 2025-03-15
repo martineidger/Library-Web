@@ -23,7 +23,7 @@ namespace Library.Test.RepositoryTests
         }
 
         [Fact]
-        public void Delete_ShouldRemoveAuthor_WhenAuthorExists()
+        public async Task Delete_ShouldRemoveAuthor_WhenAuthorExists()
         {
             // Arrange
             var authorEntity = new AuthorEntity
@@ -36,9 +36,10 @@ namespace Library.Test.RepositoryTests
             };
             _context.Authors.Add(authorEntity);
             _context.SaveChanges();
+            var cancellationToken = CancellationToken.None;
 
             // Act
-            var result = _repository.Delete(authorEntity.Id);
+            var result = await _repository.DeleteAsync(authorEntity.Id, cancellationToken);
             _context.SaveChanges();
 
             // Assert
@@ -47,13 +48,14 @@ namespace Library.Test.RepositoryTests
         }
 
         [Fact]
-        public void Delete_ShouldReturnFalse_WhenAuthorDoesNotExist()
+        public async Task Delete_ShouldReturnFalse_WhenAuthorDoesNotExist()
         {
             // Arrange
             var nonExistentId = Guid.NewGuid();
+            var cancellationToken = CancellationToken.None;
 
             // Act
-            var result = _repository.Delete(nonExistentId);
+            var result = await _repository.DeleteAsync(nonExistentId, cancellationToken);
 
             // Assert
             Assert.False(result);

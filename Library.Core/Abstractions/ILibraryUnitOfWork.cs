@@ -11,6 +11,6 @@ namespace Library.Core.Abstractions
         IAuthorRepository authorRepository { get; }
         IBookRepository bookRepository { get; }
         IUserRepository userRepository { get; }
-        Task SaveChangesAsync();
+        Task SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

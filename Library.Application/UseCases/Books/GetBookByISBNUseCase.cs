@@ -21,9 +21,9 @@ namespace Library.Application.UseCases.Books
             this.db = db;
             this.mapper = mapper;
         }
-        public async Task<BookModel> ExecuteAsync(string isbn)
+        public async Task<BookModel> ExecuteAsync(string isbn, CancellationToken cancellationToken)
         {
-            var bookEntity = await db.bookRepository.GetByISBNAsync(isbn) ??
+            var bookEntity = await db.bookRepository.GetByISBNAsync(isbn, cancellationToken) ??
                 throw new ObjectNotFoundException($"Error on GetByISBNAsync: no such book, ISBN = {isbn}");
 
             return mapper.Map<BookModel>(bookEntity);

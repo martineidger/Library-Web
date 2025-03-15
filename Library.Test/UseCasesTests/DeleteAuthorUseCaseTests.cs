@@ -27,27 +27,32 @@ namespace Library.Test.UseCasesTests
         public async Task ExecuteAsync_ShouldThrowException_WhenAuthorNotFound()
         {
             // Arrange
+            var cancellationToken = CancellationToken.None;
+            
             var authorId = Guid.NewGuid();
-            _mockUnitOfWork.Setup(u => u.authorRepository.GetByIdAsyhnc(authorId)).ReturnsAsync((AuthorEntity)null);
+            _mockUnitOfWork.Setup(u => u.authorRepository.GetByIdAsyhnc(authorId, cancellationToken)).ReturnsAsync((AuthorEntity)null);
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ObjectNotFoundException>(() => _useCase.ExecuteAsync(authorId));
+            var exception = await Assert.ThrowsAsync<ObjectNotFoundException>(() => _useCase.ExecuteAsync(authorId, cancellationToken));
             Assert.Equal($"Error on DeleteAuthorUseCase: no such author, id = {authorId}", exception.Message);
         }
 
         [Fact]
         public async Task ExecuteAsync_ShouldDeleteAuthor_WhenAuthorExists()
         {
+            
             // Arrange
+            var cancellationToken = CancellationToken.None;
+
             var authorId = Guid.NewGuid();
-            _mockUnitOfWork.Setup(u => u.authorRepository.GetByIdAsyhnc(authorId)).ReturnsAsync(new AuthorEntity());
+            _mockUnitOfWork.Setup(u => u.authorRepository.GetByIdAsyhnc(authorId, cancellationToken)).ReturnsAsync(new AuthorEntity());
 
             // Act
-            await _useCase.ExecuteAsync(authorId);
+            await _useCase.ExecuteAsync(authorId, cancellationToken);
 
             // Assert
-            _mockUnitOfWork.Verify(u => u.authorRepository.Delete(authorId), Times.Once);
-            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
+            _mockUnitOfWork.Verify(u => u.authorRepository.DeleteAsync(authorId, cancellationToken), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(cancellationToken), Times.Once);
         }
     }
 }

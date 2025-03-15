@@ -21,9 +21,9 @@ namespace Library.Application.UseCases.Books
             this.db = db;
             this.mapper = mapper;
         }
-        public async Task<PagedItems<BookModel>> ExecuteAsync(string title, int page, int size)
+        public async Task<PagedItems<BookModel>> ExecuteAsync(string title, int page, int size, CancellationToken cancellationToken)
         {
-            var booksList = await db.bookRepository.GetByTitleAsync(title, page, size) ??
+            var booksList = await db.bookRepository.GetByTitleAsync(title, page, size, cancellationToken) ??
                 throw new ObjectNotFoundException($"Error on GetBooksByTitleUseCase: list was empty");
 
 

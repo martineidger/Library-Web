@@ -21,9 +21,9 @@ namespace Library.Application.UseCases.Books
             this.db = db;
             this.mapper = mapper;
         }
-        public async Task<BookModel> ExecuteAsync(Guid id)
+        public async Task<BookModel> ExecuteAsync(Guid id, CancellationToken cancellationToken)
         {
-            var bookEntity =  await db.bookRepository.GetByIdAsync(id)??
+            var bookEntity =  await db.bookRepository.GetByIdAsync(id, cancellationToken)??
                 throw new ObjectNotFoundException($"Error on GetBookByIDUseCase: no such book, id = {id}");
 
             return mapper.Map<BookModel>(bookEntity);

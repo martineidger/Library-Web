@@ -16,13 +16,13 @@ namespace Library.Application.UseCases.Authors
         {
             this.db = db;
         }
-        public async Task ExecuteAsync(Guid id)
+        public async Task ExecuteAsync(Guid id, CancellationToken cancellationToken)
         {
-            if (await db.authorRepository.GetByIdAsyhnc(id) == null)
+            if (await db.authorRepository.GetByIdAsyhnc(id, cancellationToken) == null)
                 throw new ObjectNotFoundException($"Error on DeleteAuthorUseCase: no such author, id = {id}");
 
-            db.authorRepository.Delete(id);
-            await db.SaveChangesAsync();
+            await db.authorRepository.DeleteAsync(id, cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
         }
     }
 
