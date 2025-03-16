@@ -75,16 +75,16 @@ namespace Library.Infrastructure.Initializing
 
             var books = new BookEntity[]
             {
-            new BookEntity { ISBN = "16-148410-0", Title = "Война и мир", Genre = "Роман", Description = "Эпопея о жизни русского общества.", AuthorID = authors[0].Id },
-            new BookEntity { ISBN = "16-148410-1", Title = "Преступление и наказание", Genre = "Роман", Description = "Роман о моральных дилеммах.", AuthorID = authors[1].Id },
-            new BookEntity { ISBN = "16-148410-2", Title = "Чайка", Genre = "Пьеса", Description = "Пьеса о жизни и любви.", AuthorID = authors[2].Id },
-            new BookEntity { ISBN = "16-148410-3", Title = "Мастер и Маргарита", Genre = "Роман", Description = "Роман о любви и дьявольских интригах.", AuthorID = authors[3].Id },
-            new BookEntity { ISBN = "16-148410-4", Title = "Евгений Онегин", Genre = "Роман", Description = "Литературный роман в стихах.", AuthorID = authors[4].Id },
-            new BookEntity { ISBN = "16-148410-5", Title = "Сто лет одиночества", Genre = "Роман", Description = "Сага о семье Буэндиа.", AuthorID = authors[5].Id },
-            new BookEntity { ISBN = "16-148410-6", Title = "Старик и море", Genre = "Роман", Description = "История о борьбе старика с природой.", AuthorID = authors[6].Id },
-            new BookEntity { ISBN = "16-148410-7", Title = "Гордость и предубеждение", Genre = "Роман", Description = "История о любви и социальных различиях.", AuthorID = authors[7].Id },
-            new BookEntity { ISBN = "16-148410-8", Title = "Ослепленный", Genre = "Роман", Description = "Роман о слепоте и человечности.", AuthorID = authors[8].Id },
-            new BookEntity { ISBN = "16-148410-9", Title = "Книга Природы", Genre = "Научная литература", Description = "Изучение природы и ее законов.", AuthorID = authors[9].Id }
+            new BookEntity { ISBN = "16-148410-0", Title = "Война и мир", Genre = "Роман", Description = "Эпопея о жизни русского общества.", AuthorID = authors[0].Id, ImgPath = "covers/vim.jpg" },
+            new BookEntity { ISBN = "16-148410-1", Title = "Преступление и наказание", Genre = "Роман", Description = "Роман о моральных дилеммах.", AuthorID = authors[1].Id , ImgPath = "covers/pin.jpg"},
+            new BookEntity { ISBN = "16-148410-2", Title = "Чайка", Genre = "Пьеса", Description = "Пьеса о жизни и любви.", AuthorID = authors[2].Id , ImgPath = "covers/chka.jpg"},
+            new BookEntity { ISBN = "16-148410-3", Title = "Мастер и Маргарита", Genre = "Роман", Description = "Роман о любви и дьявольских интригах.", AuthorID = authors[3].Id , ImgPath = "covers/mim.jpg"},
+            new BookEntity { ISBN = "16-148410-4", Title = "Евгений Онегин", Genre = "Роман", Description = "Литературный роман в стихах.", AuthorID = authors[4].Id , ImgPath = "covers/evg_on.jpg"},
+            new BookEntity { ISBN = "16-148410-5", Title = "Сто лет одиночества", Genre = "Роман", Description = "Сага о семье Буэндиа.", AuthorID = authors[5].Id, ImgPath = "covers/100let_od.jpg" },
+            new BookEntity { ISBN = "16-148410-6", Title = "Старик и море", Genre = "Роман", Description = "История о борьбе старика с природой.", AuthorID = authors[6].Id , ImgPath = "covers/star_more.jpg"},
+            new BookEntity { ISBN = "16-148410-7", Title = "Гордость и предубеждение", Genre = "Роман", Description = "История о любви и социальных различиях.", AuthorID = authors[7].Id, ImgPath = "covers/gord_pred.jpg" },
+            new BookEntity { ISBN = "16-148410-8", Title = "Ослепленный", Genre = "Роман", Description = "Роман о слепоте и человечности.", AuthorID = authors[8].Id, ImgPath = "covers/slep.jpg" },
+            new BookEntity { ISBN = "16-148410-9", Title = "Книга Природы", Genre = "Научная литература", Description = "Изучение природы и ее законов.", AuthorID = authors[9].Id, ImgPath = "covers/prir.jpg" }
             };
 
             try

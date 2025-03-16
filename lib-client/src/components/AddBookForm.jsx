@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAuthors, addAuthorRequest } from '../redux/actions';
-import { addBookRequest } from '../redux/actions';
+import { getAuthors, addAuthorRequest, addBookRequest } from '../redux/actions';
 import './EditBookForm.css';
 
 const AddBookForm = () => {
@@ -14,6 +13,7 @@ const AddBookForm = () => {
     Genre: '',
     Description: '',
     AuthorID: '',
+    imgFile: null, // New state for cover image
   });
 
   const [isCreatingAuthor, setIsCreatingAuthor] = useState(false);
@@ -51,31 +51,41 @@ const AddBookForm = () => {
     }));
   };
 
+  const handleFileChange = (e) => {
+    setBook((prev) => ({
+      ...prev,
+      imgFile: e.target.files[0], // Store the selected file
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('ADDING ',book)
-    dispatch(addBookRequest(book));
+    console.log('ADDING ', book);
+
+   
+
+    dispatch(addBookRequest(book)); // Use FormData for file upload
     setBook({
       ISBN: '',
       Title: '',
       Genre: '',
       Description: '',
       AuthorID: '',
+      imgFile: null,
     });
   };
 
   const handleCreateAuthor = async (e) => {
-    e.preventDefault(); // Не забудьте предотвратить действие по умолчанию
+    e.preventDefault();
 
     if (!newAuthor.firstName || !newAuthor.surname || !newAuthor.birthDate || !newAuthor.country) {
-        alert('Пожалуйста, заполните все поля для добавления автора.');
-        return;
+      alert('Пожалуйста, заполните все поля для добавления автора.');
+      return;
     }
 
-    dispatch(addAuthorRequest(newAuthor)); // Диспатчим действие добавления автора
-
+    dispatch(addAuthorRequest(newAuthor));
     window.location.reload();
-};
+  };
 
   return (
     <div className="add-book-form">
@@ -121,6 +131,22 @@ const AddBookForm = () => {
             </option>
           ))}
         </select>
+        {book.imgFile && (
+          <div className="image-preview">
+            <h4>Текущая обложка:</h4>
+            <img
+              src={URL.createObjectURL(book.imgFile)}
+              alt="Preview"
+              style={{ width: '100px', height: 'auto' }}
+            />
+          </div>
+        )}
+        <input
+          type="file"
+          accept="image/*" // Only accept image files
+          onChange={handleFileChange}
+          required
+        />
 
         <button type="button" onClick={() => setIsCreatingAuthor(true)}>
           Создать нового автора

@@ -1,6 +1,3 @@
-# См. статью по ссылке https://aka.ms/customizecontainer, чтобы узнать как настроить контейнер отладки и как Visual Studio использует этот Dockerfile для создания образов для ускорения отладки.
-
-# Этот этап используется при запуске из VS в быстром режиме (по умолчанию для конфигурации отладки)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER $APP_UID
 WORKDIR /app
@@ -8,7 +5,7 @@ EXPOSE 8080
 
 
 # Этот этап используется для сборки проекта службы
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Library.Api/Library.Api.csproj", "Library.Api/"]
@@ -28,5 +25,13 @@ RUN dotnet publish "./Library.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publis
 # Этот этап используется в рабочей среде или при запуске из VS в обычном режиме (по умолчанию, когда конфигурация отладки не используется)
 FROM base AS final
 WORKDIR /app
+
+RUN mkdir -p /app/wwwroot
+
+# Копируйте опубликованные файлы в рабочую директорию
 COPY --from=publish /app/publish .
+
+# Копируйте изображения из папки Covers_def в wwwroot
+COPY ./Covers_def /app/wwwroot/covers
+
 ENTRYPOINT ["dotnet", "Library.Api.dll"]

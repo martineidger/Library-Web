@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\Covers\" />
+    <Folder Include="wwwroot\covers\" />
   </ItemGroup>
 
 </Project>

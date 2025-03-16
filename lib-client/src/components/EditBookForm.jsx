@@ -1,11 +1,10 @@
-
-
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateBookRequest, getAuthors } from '../redux/actions'; // Не забудьте импортировать getAuthors
+import { updateBookRequest, getAuthors } from '../redux/actions';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import './EditBookForm.css'; // Импортируем стили
+import './EditBookForm.css';
+
 const EditBookForm = () => {
   const { bookId } = useParams();
   const dispatch = useDispatch();
@@ -20,10 +19,11 @@ const EditBookForm = () => {
     Description: '',
     AuthorID: '',
     ImgFile: null,
+    ImgPath: ''
   });
   
   useEffect(() => {
-    dispatch(getAuthors(1)); // Получаем авторов при загрузке компонента
+    dispatch(getAuthors(1));
   }, [dispatch]);
 
   useEffect(() => {
@@ -34,8 +34,9 @@ const EditBookForm = () => {
         Title: existingBook.title,
         Genre: existingBook.genre,
         Description: existingBook.description,
-        AuthorID: existingBook.authorID, // Устанавливаем ID автора
+        AuthorID: existingBook.authorID,
         ImgFile: existingBook.imgFile || null,
+        ImgPath: existingBook.imgPath
       });
     }
   }, [books, bookId]);
@@ -66,7 +67,7 @@ const EditBookForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(updateBookRequest({ ...book, id: bookId })); 
+    dispatch(updateBookRequest({ ...book, id: bookId }));
     setBook({
       ISBN: '',
       Title: '',
@@ -77,6 +78,7 @@ const EditBookForm = () => {
     });
 
     navigate(`/books`);
+    window.location.reload();
   };
 
   const handleAuthorChange = (e) => {
@@ -129,12 +131,26 @@ const EditBookForm = () => {
             </option>
           ))}
         </select>
+        
+        {/* Image Preview */}
+        {book.ImgPath && (
+          <div className="image-preview">
+            <h4>Текущая обложка:</h4>
+            <img
+              src={`http://localhost:5267/${book.ImgPath}`}
+              alt="Preview"
+              style={{ width: '100px', height: 'auto' }}
+            />
+          </div>
+        )}
+
         <input
           type="file"
           name="ImgFile"
           accept="image/*"
           onChange={handleFileChange}
         />
+        
         <button type="submit" disabled={loading}>
           {loading ? 'Загрузка...' : 'Обновить книгу'}
         </button>

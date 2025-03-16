@@ -13,7 +13,7 @@ namespace Library.Api.Extensions
         {
             services.AddDbContext<LibraryDbContext>(options =>
             {
-                options.UseNpgsql(configuration.GetConnectionString("PostgresLocal"));
+                options.UseNpgsql(configuration.GetConnectionString("PostgresDocker"));
             });
 
             services.AddScoped<IUserRepository, UserRepository>();

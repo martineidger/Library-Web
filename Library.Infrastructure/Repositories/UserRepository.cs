@@ -46,16 +46,53 @@ namespace Library.Infrastructure.Repositories
             return await context.Users.FindAsync(id, cancellationToken);
         }
 
+        //public async Task<PagedItems<BookEntity>> GetUsersBooks(Guid userId, int page, int size, CancellationToken cancellationToken)
+        //{
+        //    var query = await context.Users.Include(u => u.Books).AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+        //    var books = (IQueryable<BookEntity>)query.Books;
+        //    var totalItems = await books.CountAsync(cancellationToken); 
+
+        //    var items = await books
+        //        .Skip((page - 1) * size) 
+        //        .Take(size) 
+        //        .ToListAsync(cancellationToken); 
+
+        //    return new PagedItems<BookEntity>
+        //    {
+        //        Items = items,
+        //        TotalCount = totalItems,
+        //        PageSize = size,
+        //        CurrentPage = page,
+        //        TotalPages = (int)Math.Ceiling(totalItems / (double)size)
+        //    };
+        //}
+
         public async Task<PagedItems<BookEntity>> GetUsersBooks(Guid userId, int page, int size, CancellationToken cancellationToken)
         {
-            var query = await context.Users.Include(u => u.Books).AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
-            var books = (IQueryable<BookEntity>)query.Books;
-            var totalItems = await books.CountAsync(cancellationToken); 
+            var user = await context.Users
+                                    .Include(u => u.Books)
+                                    .AsNoTracking()
+                                    .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
 
-            var items = await books
-                .Skip((page - 1) * size) 
-                .Take(size) 
-                .ToListAsync(cancellationToken); 
+            if (user == null)
+            {
+                return new PagedItems<BookEntity>
+                {
+                    Items = new List<BookEntity>(),
+                    TotalCount = 0,
+                    PageSize = size,
+                    CurrentPage = page,
+                    TotalPages = 0
+                };
+            }
+
+            var books = user.Books; // Это List<BookEntity>
+            var totalItems = books.Count; // Общее количество книг
+
+            var items = books
+                .Skip((page - 1) * size)
+                .Take(size)
+                .ToList(); // Переводим в List<BookEntity>
 
             return new PagedItems<BookEntity>
             {

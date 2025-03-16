@@ -30,7 +30,7 @@ namespace Library.Application.UseCases.Books
             this.db = db;
             this.mapper = mapper;
 
-            defFileName = Path.Combine("Covers", "def.jpg");
+            defFileName = Path.Combine("covers", "def.jpg");
         }
         public async Task<Guid> ExecuteAsync(BookModel newBook, CancellationToken cancellationToken)
         {

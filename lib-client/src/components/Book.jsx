@@ -26,8 +26,10 @@ const Book = ({ book }) => {
     return (
         <div className="book" onClick={() => handleBookClick(book.id)}>
             <h2>{book.title}</h2>
-            <img src={`/api/${book.imgPath}`} alt="" />
-            <p><strong>ISBN:</strong> {book.isbn}</p>
+            <img 
+                src={book.imgPath ? `/api/${book.imgPath}` : '/def.jpg'} 
+                alt={book.title} 
+            />
             <p><strong>Genre:</strong> {book.genre}</p>
             <p><strong>Description:</strong> {book.description}</p>
 

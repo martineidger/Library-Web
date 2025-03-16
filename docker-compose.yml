@@ -1,38 +1,61 @@
-networks:
-  app-network:
-    driver: bridge
+# networks:
+#   app-network:
+#     driver: bridge
+
+# services:
+#   backend:
+#     image: ${DOCKER_REGISTRY-}libraryapi
+#     build:
+#       context: .
+#       dockerfile: Library.Api/Dockerfile
+#     depends_on: 
+#       - db
+#     networks:
+#       - app-network
+
+#   client:
+#     image: client
+#     build: 
+#         context: ./lib-client
+#         dockerfile: Dockerfile
+#     networks:
+#       - app-network
+
+#   proxy:
+#     image: nginx:mainline
+#     depends_on:
+#     - backend
+#     networks:
+#       - app-network
+
+
+#   db:
+#     image: postgres:latest
+#     networks:
+#       - app-network
+    
+
 
 services:
-  backend:
-    image: ${DOCKER_REGISTRY-}libraryapi
+  back:
     build:
       context: .
-      dockerfile: Library.Api/Dockerfile
-    depends_on: 
+    depends_on:
       - db
-    networks:
-      - app-network
 
   client:
-    image: client
-    build: 
-        context: ./lib-client
-        dockerfile: Dockerfile
-    networks:
-      - app-network
+    build:
+      context:  ./lib-client
+    
 
   proxy:
-    image: nginx:mainline
+    image: nginx:latest
     depends_on:
-    - backend
-    networks:
-      - app-network
-
+      - back
+      - client
 
   db:
     image: postgres:latest
-    networks:
-      - app-network
     
 
 

@@ -28,7 +28,7 @@ const Register = () => {
     };
 
     return (
-        <div>
+        <div className='register'>
             <h2>Регистрация</h2>
             <form onSubmit={handleSubmit}>
                 <input type="email" name="email" placeholder="Email" value={userData.email} onChange={handleChange} required />
@@ -38,7 +38,7 @@ const Register = () => {
                     {loading ? 'Загрузка...' : 'Зарегистрироваться'}
                 </button>
             </form>
-            {error && <p>{error}</p>}
+            {error && <p className='error'>{error}</p>}
         </div>
     );
 };

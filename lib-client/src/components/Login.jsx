@@ -28,8 +28,23 @@ const Login = () => {
     await dispatch(loginRequest(credentials)); 
   };
 
+  const renderErrorMessage = () => {
+    if (!error) return null;
+
+    switch (error.status) {
+      case 401:
+        return <p className='error'>Неверный логин или пароль.</p>;
+      case 404:
+        return <p className='error'>Нет такого аккаунта.</p>;
+      case 500:
+        return <p className='error'>Ошибка сервера. Попробуйте позже.</p>;
+      default:
+        return <p className='error'>Произошла ошибка. Попробуйте еще раз.</p>;
+    }
+  };
+
   return (
-    <div>
+    <div className='login'>
       <h2>Вход</h2>
       <form onSubmit={handleSubmit}>
         <input
@@ -52,7 +67,7 @@ const Login = () => {
           {loading ? 'Загрузка...' : 'Войти'}
         </button>
       </form>
-      {error && <p>{error}</p>}
+      {renderErrorMessage()}
     </div>
   );
 };

@@ -1,69 +1,37 @@
-# # Используем базовый образ .NET SDK для сборки
-# FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-
-# # Устанавливаем рабочую директорию
-# WORKDIR /src
-
-# # Копируем файлы проекта
-# COPY ./Library.Api/*.csproj ./Library/Library.Api/
-# COPY ./Library.Application/*.csproj ./Library/Library.Application/
-# COPY ./Library.Infrastructure/*.csproj ./Library/Library.Infrastructure/
-# COPY ./Library.Core/*.csproj ./Library/Library.Core/
-# COPY ./Library.Test/*.csproj ./Library/Library.Test/
-
-# # Восстанавливаем зависимости для всех проектов
-# RUN dotnet restore ./Library/Library.Api/Library.Api.csproj
-
-# # Копируем все файлы приложения
-# COPY . ./Library
-
-# # Собираем проект
-# RUN dotnet build ./Library/Library.Api/Library.Api.csproj -c Release -o /app/build
-
-# # Создаем финальный образ
-# FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
-
-# # Копируем собранное приложение в финальный образ
-# WORKDIR /app
-# COPY --from=build /app/build .
-
-# # Открываем порт
-# EXPOSE 80
-
-# # Запускаем приложение
-# ENTRYPOINT ["dotnet", "Library.Api.dll"]
-
-# Используем базовый образ .NET SDK для сборки
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-
-# Устанавливаем рабочую директорию
-WORKDIR /src
-
-# Копируем файлы проекта
-COPY ./Library.Api/*.csproj ./Library.Api/
-COPY ./Library.Application/*.csproj ./Library.Application/
-COPY ./Library.Infrastructure/*.csproj ./Library.Infrastructure/
-COPY ./Library.Core/*.csproj ./Library.Core/
-COPY ./Library.Test/*.csproj ./Library.Test/
-
-# Восстанавливаем зависимости для всех проектов
-RUN dotnet restore ./Library.Api/Library.Api.csproj
-
-# Копируем все файлы приложения
-COPY . .
-
-# Собираем проект
-RUN dotnet build ./Library.Api/Library.Api.csproj -c Release -o /app/build
-
-# Создаем финальный образ
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
-
-# Копируем собранное приложение в финальный образ
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+USER $APP_UID
 WORKDIR /app
-COPY --from=build /app/build .
+EXPOSE 8080
 
-# Открываем порт
-EXPOSE 80
 
-# Запускаем приложение
+# Этот этап используется для сборки проекта службы
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+COPY ["Library.Api/Library.Api.csproj", "Library.Api/"]
+COPY ["Library.Application/Library.Application.csproj", "Library.Application/"]
+COPY ["Library.Core/Library.Core.csproj", "Library.Core/"]
+COPY ["Library.Infrastructure/Library.Infrastructure.csproj", "Library.Infrastructure/"]
+RUN dotnet restore "./Library.Api/Library.Api.csproj"
+COPY . .
+WORKDIR "/src/Library.Api"
+RUN dotnet build "./Library.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+# Этот этап используется для публикации проекта службы, который будет скопирован на последний этап
+FROM build AS publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "./Library.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+# Этот этап используется в рабочей среде или при запуске из VS в обычном режиме (по умолчанию, когда конфигурация отладки не используется)
+FROM base AS final
+WORKDIR /app
+
+RUN mkdir -p /app/wwwroot
+
+# Копируйте опубликованные файлы в рабочую директорию
+COPY --from=publish /app/publish .
+
+# Копируйте изображения из папки Covers_def в wwwroot
+COPY ./Library.Api/Covers_def /app/wwwroot/covers
+
 ENTRYPOINT ["dotnet", "Library.Api.dll"]

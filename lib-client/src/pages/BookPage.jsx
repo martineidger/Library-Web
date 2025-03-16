@@ -48,7 +48,8 @@ const BookPage = () => {
         <div>
             <h2>{book.title}</h2>
             <img src={`http://localhost:5267/${book.imgPath}`} alt={book.title} />
-            <p><strong>ISBN:</strong> {book.isbn}</p>
+            {isAdmin && 
+                <p><strong>ISBN:</strong> {book.isbn}</p>}
             <p><strong>Genre:</strong> {book.genre}</p>
             <p><strong>Description:</strong> {book.description}</p>
 

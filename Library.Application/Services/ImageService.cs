@@ -18,7 +18,7 @@ namespace Library.Application.Services
         public ImageService(IWebHostEnvironment env)
         {
             _env = env;
-            _storagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
+            _storagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/covers");
 
             if (!Directory.Exists(_storagePath))
             {
@@ -29,8 +29,7 @@ namespace Library.Application.Services
 
         public async Task<string> SaveAsync(IFormFile file)
         {
-            var foldName = "Covers";
-            //var foldName = _storagePath;
+            var foldName = "covers";
 
             if (file == null || file.Length == 0)
             {

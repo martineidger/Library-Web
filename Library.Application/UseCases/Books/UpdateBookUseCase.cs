@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Library.Application.Models;
 using Library.Core.Abstractions;
+using Library.Core.Abstractions.ServicesAbstractions;
 using Library.Core.Entities;
 using Library.Core.Exceptions;
 using System;
@@ -15,18 +16,36 @@ namespace Library.Application.UseCases.Books
     {
         private readonly ILibraryUnitOfWork db;
         private readonly IMapper mapper;
+        private readonly IImageService imageService;
 
-        public UpdateBookUseCase(ILibraryUnitOfWork db, IMapper mapper)
+        private string defFileName;
+
+        public UpdateBookUseCase(ILibraryUnitOfWork db, IMapper mapper, IImageService imageService)
         {
             this.db = db;
             this.mapper = mapper;
+            this.imageService = imageService;
+
+            defFileName = Path.Combine("covers", "def.jpg");
         }
         public async Task ExecuteAsync(BookModel book, CancellationToken cancellationToken)
         {
             if (await db.bookRepository.GetByIdAsync(book.Id, cancellationToken) == null)
                 throw new ObjectNotFoundException($"Error on UpdateBookUseCase: no such book, id = {book.Id}");
 
-            await db.bookRepository.UpdateAsync(mapper.Map<BookEntity>(book));
+            var bookEnt = mapper.Map<BookEntity>(book);
+
+            if (book.ImgFile != null)
+            {
+                Console.WriteLine("Added image");
+                    bookEnt.ImgPath = await imageService.SaveAsync(book.ImgFile);
+            }
+            else bookEnt.ImgPath = defFileName;
+
+            bookEnt.Author = await db.authorRepository.GetByIdAsyhnc(book.AuthorID, cancellationToken) ??
+                throw new ObjectNotFoundException($"Error on AddBookUseCase: no such author ({book.AuthorID})");
+
+            await db.bookRepository.UpdateAsync(bookEnt);
             await db.SaveChangesAsync(cancellationToken);
         }
     }

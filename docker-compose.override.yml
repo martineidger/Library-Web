@@ -1,31 +1,73 @@
+# services:
+#   backend:
+#     environment:
+#       - ASPNETCORE_ENVIRONMENT=Development
+#       - ConnectionStrings__Postgres=Host=db;Port=5432;Database=LibraryDB;Username=postgres;Password=postgres
+#     ports:
+#       - "5000:8080"
+    
+#   client:
+#     ports:
+#       - "5001:4173"
+
+#   db:
+#     ports:
+#       - "5432:5432"
+#     environment:
+#       - POSTGRES_DB=LibraryDB
+#       - POSTGRES_USER=postgres
+#       - POSTGRES_PASSWORD=postgres
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data  
+
+#   proxy:
+#     volumes:
+#       - ./nginx.conf:/etc/nginx/nginx.conf
+#       - ./dock/wwwroot/covers:/usr/share/nginx/html
+#     ports:
+#       - "80:80" 
+
+# volumes:
+#   postgres_data:
+
+networks:
+  dev:
 services:
-  backend:
+  back:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__Postgres=Host=db;Port=5432;Database=LibraryDB;Username=postgres;Password=postgres
-    ports:
-      - "5000:8080"
+      - ConnectionStrings__Postgres=Host=db;Port=5432;Database=libdb;Username=postgres;Password=postgres
+    volumes:
+      - covers_data:/app/wwwroot/covers
+    networks:
+      - dev
     
   client:
-    ports:
-      - "5001:4173"
+    networks:
+      - dev
 
   db:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=LibraryDB
+      - POSTGRES_DB=db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - postgres_data:/var/lib/postgresql/data  
+      - postgres_data:/var/lib/postgresql/data 
+    networks:
+      - dev 
 
   proxy:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./dock/wwwroot/covers:/usr/share/nginx/html
+      #- ./dock/wwwroot/covers:/app/wwwroot/covers
     ports:
       - "80:80" 
+    networks:
+      - dev
+
 
 volumes:
   postgres_data:
+  covers_data:
+      
