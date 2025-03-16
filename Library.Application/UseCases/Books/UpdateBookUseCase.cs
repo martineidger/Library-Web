@@ -30,10 +30,9 @@ namespace Library.Application.UseCases.Books
         }
         public async Task ExecuteAsync(BookModel book, CancellationToken cancellationToken)
         {
-            if (await db.bookRepository.GetByIdAsync(book.Id, cancellationToken) == null)
-                throw new ObjectNotFoundException($"Error on UpdateBookUseCase: no such book, id = {book.Id}");
-
-            var bookEnt = mapper.Map<BookEntity>(book);
+            var bookEnt = await db.bookRepository.GetByIdAsync(book.Id, cancellationToken)
+                ?? throw new ObjectNotFoundException($"Error on UpdateBookUseCase: no such book, id = {book.Id}");
+            Console.WriteLine("UPDATE");
 
             bookEnt.ISBN = book.ISBN;
             bookEnt.Title = book.Title;
@@ -41,17 +40,8 @@ namespace Library.Application.UseCases.Books
             bookEnt.Genre = book.Genre;
             bookEnt.PickDate = book.PickDate;
             bookEnt.ReturnDate = book.ReturnDate;
-
-            if (book.ImgFile != null)
-            {
-                Console.WriteLine("Added image");
-                bookEnt.ImgPath = await imageService.SaveAsync(book.ImgFile);
-            }
-            else bookEnt.ImgPath = defFileName;
             
-            bookEnt.Author = await db.authorRepository.GetByIdAsyhnc(book.AuthorID, cancellationToken) ??
-                throw new ObjectNotFoundException($"Error on AddBookUseCase: no such author ({book.AuthorID})");
-
+           
             //await db.bookRepository.UpdateAsync(bookEnt, cancellationToken);
             await db.SaveChangesAsync(cancellationToken);
         }

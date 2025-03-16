@@ -14,7 +14,13 @@ import EditBookForm from './components/EditBookForm';
 import UserBooksPage from './pages/UserBooksPage';
 import ErrorPage from './pages/ErrorPage';
 
+import { checkToken } from './api/authApi';
+
 function App() {
+  useEffect(() => {
+    checkToken();
+}, []);
+
   return (
     <>
       <div className="wrapper">

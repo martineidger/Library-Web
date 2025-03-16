@@ -97,6 +97,8 @@ export const addBookRequest = (bookData) => async (dispatch) => {
 export const updateBookRequest = (bookData, bookId) => async (dispatch) => {
   dispatch({ type: 'UPDATE_BOOK_REQUEST' });
 
+  console.log("BOOKDATA  ", bookData)
+
   const formData = new FormData();
   for (const key in bookData) {
       if (bookData[key] !== null && bookData[key] !== undefined) { 
@@ -104,11 +106,12 @@ export const updateBookRequest = (bookData, bookId) => async (dispatch) => {
       }
   }
 
+  console.log("formdata log: ")
   for (const pair of formData.entries()) {
       console.log(`${pair[0]}: ${pair[1]}`); 
   }
 
-  console.log("qwertyu   ", formData)
+  console.log("FORMDATA   ", formData)
 
   try {
       const response = await updateBook(bookId, formData)

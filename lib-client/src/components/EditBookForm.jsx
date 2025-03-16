@@ -82,8 +82,8 @@ const EditBookForm = () => {
       ImgFile: null,
     });
 
-    // navigate(`/books`);
-    // window.location.reload();
+     navigate(`/books`);
+     window.location.reload();
   };
 
   const handleAuthorChange = (e) => {

@@ -4,6 +4,7 @@ using Library.Api.Contracts;
 using Library.Application.Models;
 using Library.Application.UseCases.Authorisation;
 using Library.Core.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Api.Controllers
@@ -61,6 +62,12 @@ namespace Library.Api.Controllers
             var token = await refreshTokenUseCase.ExecuteAsync(refreshToken, cancellationToken);
 
             return Ok(new { accessToken = token });
+        }
+        [Authorize]
+        [HttpPost("ping")]
+        public async Task<IActionResult> Ping()
+        {
+            return Ok();
         }
     }
 }

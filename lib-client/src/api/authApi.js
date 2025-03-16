@@ -30,6 +30,7 @@
 
 
 import axios from "axios";
+import apiClient, {refreshAccessToken} from "./apiClient";
 
 const BASE_URL = "/api";
 
@@ -65,3 +66,28 @@ export const loginUser = async (loginData) => {
         throw error; 
     }
 };
+
+export const checkToken = async () =>{
+    try{
+        const response = await apiClient.post(`${BASE_URL}/auth/ping`);
+
+        if(response.status === 401){
+            let newToken = refreshAccessToken();
+            if(newToken){
+                localStorage.setItem('accessToken', newToken)
+            }else{
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');  
+                localStorage.removeItem('userId')
+                localStorage.removeItem('userName')  
+                localStorage.removeItem('email')  
+                window.location.href = '/login';
+            }
+            
+        }
+    }
+    catch(error){
+        console.error("Ошибка ping:", error);
+        throw error; 
+    }
+}

@@ -15,7 +15,7 @@ export const fetchBooks = async (currentPage, pageSize) => {
 
 export const updateBook = async (bookId, formData) =>{
     try{
-        console.log(formData)
+        console.log("UPD FORMDATA  ",formData)
         const response = await apiClient.put(`/books/${bookId}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',

@@ -235,3 +235,4 @@ async function refreshAccessToken() {
 }
 
 export default apiClient;
+export {refreshAccessToken};
