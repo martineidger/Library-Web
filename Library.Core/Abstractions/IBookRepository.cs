@@ -15,7 +15,7 @@ namespace Library.Core.Abstractions
         Task<PagedItems<BookEntity>> GetAllAsync(int page, int size, CancellationToken cancellationToken);
         Task<Guid> AddAsync(BookEntity entity, CancellationToken cancellationToken);
         Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken);
-        Task<Guid> UpdateAsync(BookEntity entity);
+        Task<Guid> UpdateAsync(BookEntity entity, CancellationToken cancellationToken);
         Task<PagedItems<BookEntity>> GetBookByAuthor(Guid authorId, int page, int size, CancellationToken cancellationToken);
         
     }

@@ -10,6 +10,6 @@ namespace Library.Core.Abstractions.ServicesAbstractions
     {
         public string GetAccesToken(Guid id, string role);
         public string GetRefreshToken(Guid id);
-        public string RefreshToken(string refreshToken, CancellationToken cancellationToken);
+        public Task<string> RefreshToken(string refreshToken, CancellationToken cancellationToken);
     }
 }

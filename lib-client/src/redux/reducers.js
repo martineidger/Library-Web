@@ -72,9 +72,7 @@ const bookReducer = (state = bookInitialState, action) => {
       return {
         ...state,
         loading: false,
-        books: state.books.map((book) =>
-          book.id === action.payload.id ? action.payload : book
-        ),
+        error:null,
       };
     case 'UPDATE_BOOK_FAILURE':
       return {

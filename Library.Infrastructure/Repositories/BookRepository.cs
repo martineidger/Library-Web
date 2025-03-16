@@ -109,21 +109,37 @@ namespace Library.Infrastructure.Repositories
             };
         }
 
-        public async Task<Guid> UpdateAsync(BookEntity entity)
+        public async Task<Guid> UpdateAsync(BookEntity entity, CancellationToken cancellationToken)
         {
 
-            var localEntity = context.Books.Local.FirstOrDefault(a => a.Id == entity.Id);
+            //var localEntity = context.Books.Local.FirstOrDefault(a => a.Id == entity.Id);
 
-            if (localEntity != null)
+            //if (localEntity != null)
+            //{
+            //    context.Entry(localEntity).CurrentValues.SetValues(entity);
+            //}
+            //else
+            //{
+            //    context.Books.Update(entity);
+            //}
+
+            var existingEntity = await context.Books.FindAsync(entity.Id, cancellationToken);
+
+            if (existingEntity != null)
             {
-                context.Entry(localEntity).CurrentValues.SetValues(entity);
-            }
-            else
-            {
-                context.Books.Update(entity);
+                existingEntity.ISBN = entity.ISBN;
+                existingEntity.Title = entity.Title;
+                existingEntity.Genre = entity.Genre;
+                existingEntity.Description = entity.Description;
+                existingEntity.AuthorID = entity.AuthorID;
+                existingEntity.ImgPath = entity.ImgPath;
+                existingEntity.PickDate = entity.PickDate;
+                existingEntity.ReturnDate = entity.ReturnDate;
+
+                context.Books.Update(existingEntity);
             }
 
-            return await Task.FromResult(entity.Id);
+            return entity.Id;
 
         }
     }

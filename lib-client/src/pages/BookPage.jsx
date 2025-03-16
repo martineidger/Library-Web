@@ -47,7 +47,7 @@ const BookPage = () => {
     return (
         <div>
             <h2>{book.title}</h2>
-            <img src={`http://localhost:5267/${book.imgPath}`} alt={book.title} />
+            <img src={`/api/${book.imgPath}`} alt={book.title} />
             {isAdmin && 
                 <p><strong>ISBN:</strong> {book.isbn}</p>}
             <p><strong>Genre:</strong> {book.genre}</p>
@@ -61,11 +61,14 @@ const BookPage = () => {
                 </>
             )}
 
-            {isAvailable && !isAdmin ? (
-                <button onClick={() => handleBorrow()}>Взять книгу</button>
-            ) : (
-                <p>Книга не в наличии</p>
+            {!isAdmin && (
+                isAvailable ? (
+                    <button onClick={() => handleBorrow()}>Взять книгу</button>
+                ) : (
+                    <p>Книга не в наличии</p>
+                )
             )}
+            
         </div>
     );
 };

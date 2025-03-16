@@ -186,12 +186,19 @@ apiClient.interceptors.response.use(
 
                     if (newAccessToken) {
                         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+                        localStorage.setItem('accessToken', newAccessToken)
                         return apiClient(originalRequest);
                     }
                 }
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('refreshToken');
-                window.location.href = '/login';
+                else{
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('refreshToken');  
+                    localStorage.removeItem('userId')
+                    localStorage.removeItem('userName')  
+                    localStorage.removeItem('email')  
+                    window.location.href = '/login';
+                }
+                
             }
         } else if (!error.response) { // cors && network
             window.location.href = '/error'; 
@@ -203,8 +210,23 @@ apiClient.interceptors.response.use(
 
 async function refreshAccessToken() {
     const refreshToken = localStorage.getItem('refreshToken');
+    console.log(refreshToken)
+    if(!refreshToken){
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');  
+        localStorage.removeItem('userId')
+        localStorage.removeItem('userName')  
+        localStorage.removeItem('email')  
+        window.location.href = '/login';
+    }
 
-    const response = await axios.post(`/api/auth/refresh`, { refreshToken });
+    const response = await axios.post(`/api/auth/refresh`, refreshToken, {
+        headers: {
+            'Content-Type': 'application/json', // Set the correct content type
+        },
+    });
+
+    console.log(response)
 
     if (response.status === 200) {
         return response.data.accessToken;

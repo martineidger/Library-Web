@@ -94,7 +94,7 @@ export const addBookRequest = (bookData) => async (dispatch) => {
   }
 };
 
-export const updateBookRequest = (bookData) => async (dispatch) => {
+export const updateBookRequest = (bookData, bookId) => async (dispatch) => {
   dispatch({ type: 'UPDATE_BOOK_REQUEST' });
 
   const formData = new FormData();
@@ -105,12 +105,14 @@ export const updateBookRequest = (bookData) => async (dispatch) => {
   }
 
   for (const pair of formData.entries()) {
-      console.log(`${pair[0]}: ${pair[1]}`); // Отладка
+      console.log(`${pair[0]}: ${pair[1]}`); 
   }
 
+  console.log("qwertyu   ", formData)
+
   try {
-      const response = await updateBook(bookData.id, formData)
-      dispatch({ type: 'UPDATE_BOOK_SUCCESS', payload: response.data });
+      const response = await updateBook(bookId, formData)
+      dispatch({ type: 'UPDATE_BOOK_SUCCESS', payload: response });
   } catch (error) {
       dispatch({ type: 'UPDATE_BOOK_FAILURE', payload: error.message });
   }

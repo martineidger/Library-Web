@@ -17,7 +17,7 @@ namespace Library.Application.UseCases.Authorisation
         }
         public async Task<string> ExecuteAsync(string refreshToken, CancellationToken cancellationToken)
         {
-            var newToken = tokenService.RefreshToken(refreshToken, cancellationToken);
+            var newToken = await tokenService.RefreshToken(refreshToken, cancellationToken);
             return newToken;
         }
     }

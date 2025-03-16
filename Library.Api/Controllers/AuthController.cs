@@ -57,6 +57,7 @@ namespace Library.Api.Controllers
         [HttpPost("refresh")]
         public async Task<IActionResult> RefreshToken([FromBody] string refreshToken, CancellationToken cancellationToken)
         {
+            Console.WriteLine(refreshToken);
             var token = await refreshTokenUseCase.ExecuteAsync(refreshToken, cancellationToken);
 
             return Ok(new { accessToken = token });

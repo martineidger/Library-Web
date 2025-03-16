@@ -35,17 +35,24 @@ namespace Library.Application.UseCases.Books
 
             var bookEnt = mapper.Map<BookEntity>(book);
 
+            bookEnt.ISBN = book.ISBN;
+            bookEnt.Title = book.Title;
+            bookEnt.Description = book.Description;
+            bookEnt.Genre = book.Genre;
+            bookEnt.PickDate = book.PickDate;
+            bookEnt.ReturnDate = book.ReturnDate;
+
             if (book.ImgFile != null)
             {
                 Console.WriteLine("Added image");
-                    bookEnt.ImgPath = await imageService.SaveAsync(book.ImgFile);
+                bookEnt.ImgPath = await imageService.SaveAsync(book.ImgFile);
             }
             else bookEnt.ImgPath = defFileName;
-
+            
             bookEnt.Author = await db.authorRepository.GetByIdAsyhnc(book.AuthorID, cancellationToken) ??
                 throw new ObjectNotFoundException($"Error on AddBookUseCase: no such author ({book.AuthorID})");
 
-            await db.bookRepository.UpdateAsync(bookEnt);
+            //await db.bookRepository.UpdateAsync(bookEnt, cancellationToken);
             await db.SaveChangesAsync(cancellationToken);
         }
     }

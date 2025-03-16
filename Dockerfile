@@ -1,5 +1,8 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
+# USER $APP_UID
+# ARG APP_UID=1000
+# RUN adduser -u $APP_UID appuser
+# USER appuser
 WORKDIR /app
 EXPOSE 8080
 
@@ -26,7 +29,9 @@ RUN dotnet publish "./Library.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publis
 FROM base AS final
 WORKDIR /app
 
-RUN mkdir -p /app/wwwroot
+RUN mkdir -p /app/wwwroot/covers
+# RUN chown -R appuser:appuser /app/wwwroot/covers
+RUN chmod -R 777 /app/wwwroot/covers
 
 # Копируйте опубликованные файлы в рабочую директорию
 COPY --from=publish /app/publish .

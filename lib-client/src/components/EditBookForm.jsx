@@ -30,6 +30,7 @@ const EditBookForm = () => {
     const existingBook = books.find((b) => b.id.toString() === bookId);
     if (existingBook) {
       setBook({
+        
         ISBN: existingBook.isbn,
         Title: existingBook.title,
         Genre: existingBook.genre,
@@ -67,8 +68,12 @@ const EditBookForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(updateBookRequest({ ...book, id: bookId }));
+    console.log("Submitting book data:", book);
+    console.log("Book ID:", bookId);
+    
+    dispatch(updateBookRequest(book, bookId));
     setBook({
+      
       ISBN: '',
       Title: '',
       Genre: '',
@@ -77,8 +82,8 @@ const EditBookForm = () => {
       ImgFile: null,
     });
 
-    navigate(`/books`);
-    window.location.reload();
+    // navigate(`/books`);
+    // window.location.reload();
   };
 
   const handleAuthorChange = (e) => {
@@ -137,7 +142,7 @@ const EditBookForm = () => {
           <div className="image-preview">
             <h4>Текущая обложка:</h4>
             <img
-              src={`http://localhost:5267/${book.ImgPath}`}
+              src={`/api/${book.ImgPath}`}
               alt="Preview"
               style={{ width: '100px', height: 'auto' }}
             />

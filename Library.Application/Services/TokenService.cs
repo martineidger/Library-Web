@@ -69,10 +69,10 @@ namespace Library.Application.Services
             return codedRefreshToken;
         }
 
-        public string RefreshToken(string refreshToken, CancellationToken cancellationToken)
+        public async Task<string> RefreshToken(string refreshToken, CancellationToken cancellationToken)
         {
             var userId = ValidateRefreshToken(refreshToken);
-            var user = db.userRepository.GetByIdAsync(userId, cancellationToken).Result;
+            var user = await db.userRepository.GetByIdAsync(userId, cancellationToken);
 
             var newAccessToken = GetAccesToken(userId, user.Role);
 
@@ -81,6 +81,7 @@ namespace Library.Application.Services
 
         private Guid ValidateRefreshToken(string refreshToken)
         {
+            Console.WriteLine($"{refreshToken}");
             byte[] bytes = Convert.FromBase64String(refreshToken);
             string jsonString = Encoding.UTF8.GetString(bytes);
 
