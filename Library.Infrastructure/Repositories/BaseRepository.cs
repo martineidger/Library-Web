@@ -29,7 +29,7 @@ namespace Library.Infrastructure.Repositories
             context.Set<T>().Remove(entity);
         }
 
-        public async Task<PagedItems<T>> GetAllAsync(int page, int size, CancellationToken cancellationToken)
+        public virtual async Task<PagedItems<T>> GetAllAsync(int page, int size, CancellationToken cancellationToken)
         {
             var query = context.Set<T>().AsNoTracking();
 

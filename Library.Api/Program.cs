@@ -7,6 +7,7 @@ using Library.Application.Services;
 using Library.Core.Abstractions.ServicesAbstractions;
 using Library.Api.Middlewares;
 using Library.Core.Abstractions;
+using Library.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -32,7 +33,7 @@ builder.Services.AddRepositories(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddUseCases();
 
-builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ITokenService, JWTService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 
 builder.Services.AddAuth(configuration);
