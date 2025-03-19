@@ -1,7 +1,7 @@
 ﻿using Library.Application.Models;
 using Library.Core.Abstractions;
 using Library.Core.Entities;
-using Library.Core.Exceptions;
+using Library.Application.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

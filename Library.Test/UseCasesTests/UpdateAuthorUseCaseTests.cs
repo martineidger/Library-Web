@@ -3,7 +3,7 @@ using Library.Application.Models;
 using Library.Application.UseCases.Authors;
 using Library.Core.Abstractions;
 using Library.Core.Entities;
-using Library.Core.Exceptions;
+using Library.Application.Exceptions;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -33,7 +33,7 @@ namespace Library.Test.UseCasesTests
             // Arrange
             var cancellationToken = CancellationToken.None;
             var authorModel = new AuthorModel { Id = Guid.NewGuid() };
-            _mockUnitOfWork.Setup(u => u.authorRepository.GetByIdAsyhnc(authorModel.Id,  cancellationToken)).ReturnsAsync((AuthorEntity)null);
+            _mockUnitOfWork.Setup(u => u.authorRepository.GetByIdAsync(authorModel.Id,  cancellationToken)).ReturnsAsync((AuthorEntity)null);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<ObjectNotFoundException>(() => _useCase.ExecuteAsync(authorModel, cancellationToken));
@@ -54,14 +54,14 @@ namespace Library.Test.UseCasesTests
             };
             var cancellationToken = CancellationToken.None;
             var authorEntity = new AuthorEntity { Id = authorModel.Id };
-            _mockUnitOfWork.Setup(u => u.authorRepository.GetByIdAsyhnc(authorModel.Id, cancellationToken)).ReturnsAsync(authorEntity);
+            _mockUnitOfWork.Setup(u => u.authorRepository.GetByIdAsync(authorModel.Id, cancellationToken)).ReturnsAsync(authorEntity);
             _mockMapper.Setup(m => m.Map<AuthorEntity>(authorModel)).Returns(authorEntity);
 
             // Act
             await _useCase.ExecuteAsync(authorModel, cancellationToken);
 
             // Assert
-            _mockUnitOfWork.Verify(u => u.authorRepository.UpdateAsync(authorEntity), Times.Once);
+            _mockUnitOfWork.Verify(u => u.authorRepository.UpdateAsync(authorEntity, cancellationToken), Times.Once);
             _mockUnitOfWork.Verify(u => u.SaveChangesAsync(cancellationToken), Times.Once);
         }
     }

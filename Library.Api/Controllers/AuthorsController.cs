@@ -3,8 +3,6 @@ using FluentValidation;
 using Library.Api.Contracts;
 using Library.Application.Models;
 using Library.Application.UseCases.Authors;
-using Library.Application.UseCases.Books;
-using Library.Core.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

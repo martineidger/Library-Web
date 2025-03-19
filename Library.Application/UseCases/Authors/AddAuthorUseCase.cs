@@ -3,7 +3,7 @@ using Library.Application.Models;
 using Library.Core.Abstractions;
 using Library.Core.Abstractions.ServicesAbstractions;
 using Library.Core.Entities;
-using Library.Core.Exceptions;
+using Library.Application.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,10 +30,10 @@ namespace Library.Application.UseCases.Authors
             if (await db.authorRepository.GetByFullNAMe(author.FirstName, author.Surname, cancellationToken) != null)
                 throw new ObjectAlreadyExistsException($"Author {author.FirstName} {author.Surname} already exists.");
 
-            var id = await db.authorRepository.AddAsync(newAuthor, cancellationToken);
+            var addedAuthor = await db.authorRepository.AddAsync(newAuthor, cancellationToken);
             await db.SaveChangesAsync(cancellationToken);
 
-            return id;
+            return addedAuthor.Id;
         }
     }
 }

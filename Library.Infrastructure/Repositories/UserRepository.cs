@@ -1,6 +1,5 @@
 ﻿using Library.Core.Abstractions;
 using Library.Core.Entities;
-using Library.Core.Exceptions;
 using Library.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,40 +10,40 @@ using System.Threading.Tasks;
 
 namespace Library.Infrastructure.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : BaseRepository<UserEntity>, IUserRepository
     {
         private readonly LibraryDbContext context;
 
-        public UserRepository(LibraryDbContext context)
+        public UserRepository(LibraryDbContext context) : base(context) 
         {
             this.context = context;
         }
 
-        public async Task<Guid> AddAsync(UserEntity user, CancellationToken cancellationToken)
-        {
-            await context.Users.AddAsync(user, cancellationToken);
-            return user.Id;
-        }
+        //public async Task<Guid> AddAsync(UserEntity user, CancellationToken cancellationToken)
+        //{
+        //    await context.Users.AddAsync(user, cancellationToken);
+        //    return user.Id;
+        //}
 
-        public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
-        {
-            var entity = await context.Books.FindAsync(new object[] { id }, cancellationToken);
-            if (entity == null) return false;
+        //public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
+        //{
+        //    var entity = await context.Books.FindAsync(new object[] { id }, cancellationToken);
+        //    if (entity == null) return false;
 
-            context.Books.Remove(entity);
+        //    context.Books.Remove(entity);
 
-            return true;
-        }
+        //    return true;
+        //}
 
         public async Task<UserEntity?> GetByEmailAsync(string email, CancellationToken cancellationToken)
         {
             return await context.Users.Include(u => u.Books).FirstOrDefaultAsync(us => us.Email == email, cancellationToken);
         }
 
-        public async Task<UserEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
-        {
-            return await context.Users.FindAsync(id, cancellationToken);
-        }
+        //public async Task<UserEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        //{
+        //    return await context.Users.FindAsync(id, cancellationToken);
+        //}
 
         //public async Task<PagedItems<BookEntity>> GetUsersBooks(Guid userId, int page, int size, CancellationToken cancellationToken)
         //{
@@ -104,19 +103,19 @@ namespace Library.Infrastructure.Repositories
             };
         }
 
-        public async Task<Guid> UpdateAsync(UserEntity entity)
-        {
-            var localEntity = context.Books.Local.FirstOrDefault(a => a.Id == entity.Id);
-            if (localEntity != null)
-            {
-                context.Entry(localEntity).CurrentValues.SetValues(entity);
-            }
-            else
-            {
-                context.Update(entity);
-            }
+        //public async Task<Guid> UpdateAsync(UserEntity entity)
+        //{
+        //    var localEntity = context.Books.Local.FirstOrDefault(a => a.Id == entity.Id);
+        //    if (localEntity != null)
+        //    {
+        //        context.Entry(localEntity).CurrentValues.SetValues(entity);
+        //    }
+        //    else
+        //    {
+        //        context.Update(entity);
+        //    }
 
-            return await Task.FromResult(entity.Id);
-        }
+        //    return await Task.FromResult(entity.Id);
+        //}
     }
 }

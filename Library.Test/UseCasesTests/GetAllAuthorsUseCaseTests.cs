@@ -3,7 +3,7 @@ using Library.Application.Models;
 using Library.Application.UseCases.Authors;
 using Library.Core.Abstractions;
 using Library.Core.Entities;
-using Library.Core.Exceptions;
+using Library.Application.Exceptions;
 using Moq;
 using System;
 using System.Collections.Generic;

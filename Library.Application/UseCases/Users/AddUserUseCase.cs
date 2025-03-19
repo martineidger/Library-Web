@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Library.Application.Exceptions;
 using Library.Application.Models;
 using Library.Core.Abstractions;
 using Library.Core.Entities;
@@ -22,10 +23,16 @@ namespace Library.Application.UseCases.Users
         }
         public async Task<Guid> ExecuteAsync(UserModel user, CancellationToken cancellationToken)
         {
-            var id = await db.userRepository.AddAsync(mapper.Map<UserEntity>(user), cancellationToken);
+            var newAuthor = mapper.Map<UserEntity>(user);
+
+            if (await db.userRepository.GetByEmailAsync(user.Email, cancellationToken) != null)
+                throw new ObjectAlreadyExistsException($"User with email {user.Email} already exists.");
+
+
+            var addedUser = await db.userRepository.AddAsync(mapper.Map<UserEntity>(user), cancellationToken);
             await db.SaveChangesAsync(cancellationToken);
 
-            return id;
+            return addedUser.Id;
         }
     }
 }

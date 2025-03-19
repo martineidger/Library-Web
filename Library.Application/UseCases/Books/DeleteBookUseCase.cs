@@ -1,6 +1,6 @@
 ﻿using Library.Core.Abstractions;
 using Library.Core.Entities;
-using Library.Core.Exceptions;
+using Library.Application.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,10 +19,10 @@ namespace Library.Application.UseCases.Books
         }
         public async Task ExecuteAsync(Guid id, CancellationToken cancellationToken)
         {
-            if (await db.bookRepository.GetByIdAsync(id, cancellationToken) == null)
+            var bookToDelete = await db.bookRepository.GetByIdAsync(id, cancellationToken) ??
                 throw new ObjectNotFoundException($"Error on DeleteBookUseCase: no such book, id = {id}");
 
-            await db.bookRepository.DeleteAsync(id, cancellationToken);
+            db.bookRepository.Delete(bookToDelete);
             await db.SaveChangesAsync(cancellationToken);
         }
     }

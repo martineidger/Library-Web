@@ -2,7 +2,7 @@
 using Library.Application.Models;
 using Library.Core.Abstractions;
 using Library.Core.Entities;
-using Library.Core.Exceptions;
+using Library.Application.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +26,7 @@ namespace Library.Application.UseCases.Users
             if (db.userRepository.GetByIdAsync(user.Id, cancellationToken) == null)
                 throw new ObjectNotFoundException($"Error on UpdateUserUseCase: no such user, id = {user.Id}");
 
-            await db.userRepository.UpdateAsync(mapper.Map<UserEntity>(user));
+            await db.userRepository.UpdateAsync(mapper.Map<UserEntity>(user), cancellationToken);
             await db.SaveChangesAsync(cancellationToken);
         }
     }

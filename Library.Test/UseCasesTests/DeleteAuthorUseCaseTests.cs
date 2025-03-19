@@ -1,7 +1,7 @@
 ﻿using Library.Application.UseCases.Authors;
 using Library.Core.Abstractions;
 using Library.Core.Entities;
-using Library.Core.Exceptions;
+using Library.Application.Exceptions;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -30,7 +30,7 @@ namespace Library.Test.UseCasesTests
             var cancellationToken = CancellationToken.None;
             
             var authorId = Guid.NewGuid();
-            _mockUnitOfWork.Setup(u => u.authorRepository.GetByIdAsyhnc(authorId, cancellationToken)).ReturnsAsync((AuthorEntity)null);
+            _mockUnitOfWork.Setup(u => u.authorRepository.GetByIdAsync(authorId, cancellationToken)).ReturnsAsync((AuthorEntity)null);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<ObjectNotFoundException>(() => _useCase.ExecuteAsync(authorId, cancellationToken));
@@ -40,18 +40,23 @@ namespace Library.Test.UseCasesTests
         [Fact]
         public async Task ExecuteAsync_ShouldDeleteAuthor_WhenAuthorExists()
         {
-            
+
             // Arrange
             var cancellationToken = CancellationToken.None;
-
             var authorId = Guid.NewGuid();
-            _mockUnitOfWork.Setup(u => u.authorRepository.GetByIdAsyhnc(authorId, cancellationToken)).ReturnsAsync(new AuthorEntity());
+
+            // Создайте экземпляр AuthorEntity, который будет использоваться для удаления
+            var authorEntity = new AuthorEntity { Id = authorId };
+
+            // Настройте мок, чтобы вернуть созданный объект
+            _mockUnitOfWork.Setup(u => u.authorRepository.GetByIdAsync(authorId, cancellationToken))
+                .ReturnsAsync(authorEntity);
 
             // Act
             await _useCase.ExecuteAsync(authorId, cancellationToken);
 
             // Assert
-            _mockUnitOfWork.Verify(u => u.authorRepository.DeleteAsync(authorId, cancellationToken), Times.Once);
+            _mockUnitOfWork.Verify(u => u.authorRepository.Delete(authorEntity), Times.Once);
             _mockUnitOfWork.Verify(u => u.SaveChangesAsync(cancellationToken), Times.Once);
         }
     }

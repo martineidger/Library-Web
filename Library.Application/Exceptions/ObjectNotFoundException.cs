@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library.Core.Exceptions
+namespace Library.Application.Exceptions
 {
     public class ObjectNotFoundException : Exception
     {

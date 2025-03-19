@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Library.Core.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Library.Core.Entities
 {
-    public class UserEntity
+    public class UserEntity : IEntity
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Role {  get; set; }

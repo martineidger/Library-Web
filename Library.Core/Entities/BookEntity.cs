@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Library.Core.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Library.Core.Entities
 {
-    public class BookEntity
+    public class BookEntity : IEntity
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string ISBN { get; set; }

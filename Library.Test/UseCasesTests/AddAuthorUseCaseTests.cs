@@ -3,7 +3,7 @@ using Library.Application.Models;
 using Library.Application.UseCases.Authors;
 using Library.Core.Abstractions;
 using Library.Core.Entities;
-using Library.Core.Exceptions;
+using Library.Application.Exceptions;
 using Library.Infrastructure;
 using Moq;
 using System;
@@ -66,7 +66,7 @@ namespace Library.Test.UseCasesTests
             _mockMapper.Setup(m => m.Map<AuthorEntity>(authorModel)).Returns(authorEntity);
             _mockUnitOfWork.Setup(u => u.authorRepository.GetByFullNAMe(authorModel.FirstName, authorModel.Surname, cancellationToken))
                            .ReturnsAsync((AuthorEntity)null);
-            _mockUnitOfWork.Setup(u => u.authorRepository.AddAsync(authorEntity, cancellationToken)).ReturnsAsync(authorEntity.Id);
+            _mockUnitOfWork.Setup(u => u.authorRepository.AddAsync(authorEntity, cancellationToken)).ReturnsAsync(authorEntity);
 
             // Act
             var result = await _useCase.ExecuteAsync(authorModel, cancellationToken);

@@ -1,5 +1,4 @@
 ﻿using Library.Core.Entities;
-using Library.Core.Exceptions;
 using Library.Infrastructure.Context;
 using Library.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -43,7 +42,7 @@ namespace Library.Test.RepositoryTests
             await _context.SaveChangesAsync(); 
 
             // Assert
-            Assert.Equal(authorEntity.Id, result);
+            Assert.Equal(authorEntity.Id, result.Id);
             Assert.Contains(authorEntity, _context.Authors);
         }
 

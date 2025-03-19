@@ -1,5 +1,5 @@
 ﻿using Library.Core.Abstractions;
-using Library.Core.Exceptions;
+using Library.Application.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +18,10 @@ namespace Library.Application.UseCases.Users
         }
         public async Task ExecuteAsync(Guid id, CancellationToken cancellationToken)
         {
-            if (db.userRepository.GetByIdAsync(id, cancellationToken) == null)
+            var userToDelete = await db.userRepository.GetByIdAsync(id, cancellationToken) ??
                 throw new ObjectNotFoundException($"Error on DeleteUserUseCase: no such user, id = {id}");
 
-            await db.userRepository.DeleteAsync(id, cancellationToken);
+            db.userRepository.Delete(userToDelete);
             await db.SaveChangesAsync(cancellationToken);
         }
     }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using AutoMapper;
 using Library.Application.Models;
-using Library.Core.Exceptions;
+using Library.Application.Exceptions;
 using Microsoft.AspNetCore.Hosting;
 
 namespace Library.Application.UseCases.Books
@@ -46,13 +46,13 @@ namespace Library.Application.UseCases.Books
             }
             else bookEnt.ImgPath = defFileName;
             
-            bookEnt.Author = await db.authorRepository.GetByIdAsyhnc(newBook.AuthorID, cancellationToken)??
+            bookEnt.Author = await db.authorRepository.GetByIdAsync(newBook.AuthorID, cancellationToken)??
                 throw new ObjectNotFoundException($"Error on AddBookUseCase: no such author ({newBook.AuthorID})");
 
-            var id = await db.bookRepository.AddAsync(bookEnt, cancellationToken);
+            var addedBook = await db.bookRepository.AddAsync(bookEnt, cancellationToken);
             await db.SaveChangesAsync(cancellationToken);
 
-            return id;
+            return addedBook.Id;
         }
     }
 }

@@ -3,7 +3,7 @@ using Library.Application.Models;
 using Library.Application.UseCases.Authors;
 using Library.Core.Abstractions;
 using Library.Core.Entities;
-using Library.Core.Exceptions;
+using Library.Application.Exceptions;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -33,7 +33,7 @@ namespace Library.Test.UseCasesTests
             // Arrange
             var cancellationToken = CancellationToken.None;
             var authorId = Guid.NewGuid();
-            _mockUnitOfWork.Setup(u => u.authorRepository.GetByIdAsyhnc(authorId, cancellationToken)).ReturnsAsync((AuthorEntity)null);
+            _mockUnitOfWork.Setup(u => u.authorRepository.GetByIdAsync(authorId, cancellationToken)).ReturnsAsync((AuthorEntity)null);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<ObjectNotFoundException>(() => _useCase.ExecuteAsync(authorId, cancellationToken));
@@ -62,7 +62,7 @@ namespace Library.Test.UseCasesTests
                 Country = "USA"
             };
             var cancellationToken = CancellationToken.None;
-            _mockUnitOfWork.Setup(u => u.authorRepository.GetByIdAsyhnc(authorId, cancellationToken)).ReturnsAsync(authorEntity);
+            _mockUnitOfWork.Setup(u => u.authorRepository.GetByIdAsync(authorId, cancellationToken)).ReturnsAsync(authorEntity);
             _mockMapper.Setup(m => m.Map<AuthorModel>(authorEntity)).Returns(authorModel);
 
             // Act

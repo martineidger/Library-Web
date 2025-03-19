@@ -39,26 +39,15 @@ namespace Library.Test.RepositoryTests
             var cancellationToken = CancellationToken.None;
 
             // Act
-            var result = await _repository.DeleteAsync(authorEntity.Id, cancellationToken);
+             _repository.Delete(authorEntity);
             _context.SaveChanges();
+
+            var result = await _repository.GetByFullNAMe(authorEntity.FirstName, authorEntity.Surname, cancellationToken) == null;
 
             // Assert
             Assert.True(result);
             Assert.DoesNotContain(authorEntity, _context.Authors);
         }
 
-        [Fact]
-        public async Task Delete_ShouldReturnFalse_WhenAuthorDoesNotExist()
-        {
-            // Arrange
-            var nonExistentId = Guid.NewGuid();
-            var cancellationToken = CancellationToken.None;
-
-            // Act
-            var result = await _repository.DeleteAsync(nonExistentId, cancellationToken);
-
-            // Assert
-            Assert.False(result);
-        }
     }
 }

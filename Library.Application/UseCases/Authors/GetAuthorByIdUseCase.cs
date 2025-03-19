@@ -2,7 +2,7 @@
 using Library.Application.Models;
 using Library.Core.Abstractions;
 using Library.Core.Entities;
-using Library.Core.Exceptions;
+using Library.Application.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +23,7 @@ namespace Library.Application.UseCases.Authors
         }
         public async Task<AuthorModel> ExecuteAsync(Guid id, CancellationToken cancellationToken)
         {
-            var authorEntity =  await db.authorRepository.GetByIdAsyhnc(id, cancellationToken) ??
+            var authorEntity =  await db.authorRepository.GetByIdAsync(id, cancellationToken) ??
                 throw new ObjectNotFoundException($"Error on GetAuthorByIdUseCase: no such author, id = {id}");
 
             return mapper.Map<AuthorModel>(authorEntity);

@@ -2,7 +2,7 @@
 using Library.Application.Models;
 using Library.Core.Abstractions;
 using Library.Core.Entities;
-using Library.Core.Exceptions;
+using Library.Application.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,10 +23,10 @@ namespace Library.Application.UseCases.Authors
         }
         public async Task ExecuteAsync(AuthorModel author, CancellationToken cancellationToken)
         {
-            if (await db.authorRepository.GetByIdAsyhnc(author.Id, cancellationToken) == null)
+            if (await db.authorRepository.GetByIdAsync(author.Id, cancellationToken) == null)
                 throw new ObjectNotFoundException($"Error on UpdateAuthorUseCase: no such author, id = {author.Id}");
 
-            await db.authorRepository.UpdateAsync(mapper.Map<AuthorEntity>(author));
+            await db.authorRepository.UpdateAsync(mapper.Map<AuthorEntity>(author), cancellationToken);
             await db.SaveChangesAsync(cancellationToken);
         }
     }

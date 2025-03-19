@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
+using Library.Application.Exceptions;
 using Library.Application.Models;
 using Library.Core.Abstractions;
 using Library.Core.Entities;
-using Library.Core.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,9 +30,9 @@ namespace Library.Application.UseCases.Authorisation
 
             userEntity.HashPassword = BCrypt.Net.BCrypt.HashPassword(user.Password); 
 
-            var newId = await db.userRepository.AddAsync(userEntity, cancellationToken);
+            var newEntity = await db.userRepository.AddAsync(userEntity, cancellationToken);
             await db.SaveChangesAsync(cancellationToken);
-            return newId;
+            return newEntity.Id;
         }
     }
 }

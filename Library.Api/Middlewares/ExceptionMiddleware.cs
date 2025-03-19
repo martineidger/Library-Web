@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Library.Core.Exceptions;
+using Library.Application.Exceptions;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Diagnostics;

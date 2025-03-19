@@ -1,5 +1,5 @@
 ﻿using Library.Core.Abstractions;
-using Library.Core.Exceptions;
+using Library.Application.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +18,10 @@ namespace Library.Application.UseCases.Authors
         }
         public async Task ExecuteAsync(Guid id, CancellationToken cancellationToken)
         {
-            if (await db.authorRepository.GetByIdAsyhnc(id, cancellationToken) == null)
+            var authorToDelete = await db.authorRepository.GetByIdAsync(id, cancellationToken) ??
                 throw new ObjectNotFoundException($"Error on DeleteAuthorUseCase: no such author, id = {id}");
 
-            await db.authorRepository.DeleteAsync(id, cancellationToken);
+            db.authorRepository.Delete(authorToDelete);
             await db.SaveChangesAsync(cancellationToken);
         }
     }

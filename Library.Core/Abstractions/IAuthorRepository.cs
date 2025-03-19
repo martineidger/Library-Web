@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace Library.Core.Abstractions
 {
-    public interface IAuthorRepository
+    public interface IAuthorRepository : IBaseRepository<AuthorEntity>
     {
-        Task<AuthorEntity?> GetByIdAsyhnc(Guid id, CancellationToken cancellationToken);
-        Task<PagedItems<AuthorEntity>> GetAllAsync(int page, int size, CancellationToken cancellationToken);
+        //Task<AuthorEntity?> GetByIdAsyhnc(Guid id, CancellationToken cancellationToken);
+        //Task<PagedItems<AuthorEntity>> GetAllAsync(int page, int size, CancellationToken cancellationToken);
         Task<List<AuthorEntity>> GetAllAsync(CancellationToken cancellationToken);
         Task<AuthorEntity?> GetByFullNAMe(string name, string surname, CancellationToken cancellationToken);
-        Task<Guid> AddAsync(AuthorEntity entity, CancellationToken cancellationToken);
-        Task<Guid> UpdateAsync(AuthorEntity entity);
-        Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken);
+        //Task<Guid> AddAsync(AuthorEntity entity, CancellationToken cancellationToken);
+        //Task<Guid> UpdateAsync(AuthorEntity entity);
+        //Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken);
 
 
     }
