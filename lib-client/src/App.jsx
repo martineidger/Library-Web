@@ -1,9 +1,7 @@
 import { Routes, Route } from 'react-router';
-import React from 'react';
+import React, {useEffect} from 'react';
 import HomePage from './pages/HomePage';
-import UserProfilePage from './pages/UserProfilePage';
 import NotFoundPage from './pages/NotFoundPage';
-import AuthPage from './pages/AuthPage';
 import BookPage from './pages/BookPage';
 import Login from './components/Login';
 import Register from './components/Registration';
@@ -33,10 +31,8 @@ function App() {
           <Route path="/books/edit/:bookId" element={<EditBookForm />} />
           <Route path="/userBooks" element={<UserBooksPage />} />
           <Route path="/error" element={<ErrorPage />} />
-          <Route path="/auth/*" element={<AuthPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registration" element={<Register />} />
-          <Route path="/user/*" element={<UserProfilePage />} />
           
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

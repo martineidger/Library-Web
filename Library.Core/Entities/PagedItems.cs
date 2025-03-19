@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Library.Core.Entities
 {
-    public class PagedItems<T> /*where T : IEntity*/
+    public class PagedItems<T> 
     {
         public List<T> Items { get; set; } = new List<T>();
         public int TotalCount { get; set; }

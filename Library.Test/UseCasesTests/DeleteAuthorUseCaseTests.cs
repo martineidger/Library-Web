@@ -45,10 +45,8 @@ namespace Library.Test.UseCasesTests
             var cancellationToken = CancellationToken.None;
             var authorId = Guid.NewGuid();
 
-            // Создайте экземпляр AuthorEntity, который будет использоваться для удаления
             var authorEntity = new AuthorEntity { Id = authorId };
 
-            // Настройте мок, чтобы вернуть созданный объект
             _mockUnitOfWork.Setup(u => u.authorRepository.GetByIdAsync(authorId, cancellationToken))
                 .ReturnsAsync(authorEntity);
 

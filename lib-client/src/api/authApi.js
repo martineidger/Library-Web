@@ -69,7 +69,7 @@ export const loginUser = async (loginData) => {
 
 export const checkToken = async () =>{
     try{
-        const response = await apiClient.post(`${BASE_URL}/auth/ping`);
+        const response = await apiClient.post(`auth/ping`);
 
         if(response.status === 401){
             let newToken = refreshAccessToken();
